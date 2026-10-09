@@ -1409,6 +1409,27 @@
     if (!si.length || si.length === ops.length) return ui;
     return ui.filter(a => a.tipo !== 'opcion' || si.includes(a));
   }
+  async function intencionVisor(texto) {
+    const v = Visor3D.activo(); if (!v || v.tipo !== 'modelo') return null;
+    const t = norm(texto);
+    if (/\b(pon|ponle|cambia|quita|agrega|sube|baja|elimina|activa|desactiva)\b/.test(t)) return null;
+    if (/que (elementos|piezas|partes|cosas) (tiene|hay|se ven|ves|aparecen|incluye)/.test(t)) return { tipo: 'lista' };
+    const quiereVer = /muestr|ensen|vista|desde|ponla|ponlo|velo|vela|mira|ver\b/.test(t);
+    const DIR = [[/de frente|frontal|desde (el )?frente/, 'frontal'], [/atras|detras|posterior/, 'posterior'], [/desde arriba|en planta|vista superior|vista de planta|cenital|zenital/, 'superior'], [/desde abajo|vista inferior/, 'inferior'],
+      [/(lado|lateral|vista|desde (el )?lado) derech|derecho/, 'lateral_derecha'], [/(lado|lateral|vista|desde (el )?lado) izquierd|izquierdo/, 'lateral_izquierda'], [/isometric/, 'isometrica']];
+    if (quiereVer) for (const [re, acc] of DIR) if (re.test(t)) return { tipo: 'vista', accion: acc };
+    const m = t.match(/^(?:ahora |oye |vera )?(?:muestrame|ensename|selecciona|ubica|senala|resalta|identifica|donde (?:esta|queda|va))\s+(?:a |la |el |los |las |un |una |mi )?(.+?)(?: en el modelo| en 3d| del modelo| por favor)?$/);
+    if (!m) return null;
+    const objetivo = m[1].trim(); if (objetivo.length < 3) return null;
+    // Solo si de verdad es un elemento del modelo (no "el resultado", "las alternativas"…)
+    const sc = await Visor3D._escena(v); if (!sc) return null;
+    const pal = objetivo.split(' ').filter(w => w.length > 3);
+    const hay = Visor3D._elementos(sc).some(e => { const n = norm(e.l); return n.includes(objetivo) || objetivo.includes(n) || (pal.length && pal.every(w => n.includes(w.slice(0, 5)))); });
+    if (hay) return { tipo: 'elemento', texto: objetivo };
+    // Elementos de otros pasos (caseta, oficinas, estacionamiento…): que Vera diga dónde se ven
+    if (/caseta|oficina|estacionamiento|banqueta|vialidad|pavimento|cerca|reja|murete|torniquete|areas? verdes|jardin|sanitario/.test(objetivo)) return { tipo: 'elemento', texto: objetivo };
+    return null;
+  }
   function corregirOpciones(ui, texto) {
     // "Quita una grúa" / "agrega otra grúa": relativo a lo que ya hay
     const est = (() => { try { return estadoGuiada(); } catch (_) { return ''; } })();
@@ -2769,9 +2790,15 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
           let ui = acciones.filter(a => ['clic', 'escribir', 'ver', 'ir', 'dato', 'opcion', 'ajustar', 'tecla', 'pagina', 'vista', 'elemento', 'mapa', 'concepto', 'area', 'resaltar'].includes(a.tipo));
           corregirOpciones(ui, textoUsuario);
           ui = quitarExtras(ui, textoUsuario);
+          // Peticiones claras sobre el visor 3D ("desde atrás", "muéstrame la grúa", "¿qué elementos tiene?"): se cumplen aunque la IA se confunda
+          const iv = await intencionVisor(textoUsuario);
+          if (iv && iv.tipo === 'vista' && !ui.some(a => a.tipo === 'vista')) ui = ui.filter(a => !['ir', 'opcion', 'dato', 'clic'].includes(a.tipo)).concat([parsearAccion('vista ' + iv.accion)]);
+          else if (iv && iv.tipo === 'elemento' && !ui.some(a => a.tipo === 'elemento' && a.texto)) ui = ui.filter(a => a.tipo === 'vista').concat([parsearAccion('elemento ' + iv.texto)]);
+          else if (iv && iv.tipo === 'lista') ui = [parsearAccion('elemento')];
+          const forzarVisor = !!iv;
           // [[dato]] y [[opcion]] ya navegan solos: un [[ir]] extra solo se respeta si el usuario pidió cambiar de paso
           if (ui.some(a => a.tipo === 'dato' || a.tipo === 'opcion') && !PIDE_IR.test(textoUsuario)) ui = ui.filter(a => a.tipo !== 'ir');
-          if (soloPregunta) ui = []; // a una pregunta se responde, no se actúa
+          if (soloPregunta && !forzarVisor) ui = []; // a una pregunta se responde, no se actúa
           // Si la IA pide confirmación con sus palabras, no actúa todavía (la app confirma con botones cuando hay comando)
           if (/¿\s*(confirm|quieres que|deseas que|lo env[ií]o|la env[ií]o|procedo|est[aá]s seguro|lo borro|la borro)/i.test(parte)) ui = [];
           const seguir0 = acciones.some(a => a.tipo === 'seguir');
@@ -3081,7 +3108,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
     cerrar: () => App.cerrar(),
     preguntar: texto => { App.abrir(); App.enviar(texto, 'texto'); },
     memoria: () => Memoria.d(),
-    _depurar: () => ({ App, Control, Memoria, Visor3D, MapaG, Experto, Extra, Gestos, parsearAccion, Habil, GUIADA, DATOS, REGLAS, ALIAS, catalogoTexto, guiaTexto, preciosTexto, estadoGuiada, reglasControl, contextoVector, corregirOpciones, quitarExtras, sinNotas, PIDE_VER, ORDEN_FUERTE, ES_PREGUNTA, norm }),
+    _depurar: () => ({ App, Control, Memoria, Visor3D, MapaG, Experto, Extra, Gestos, parsearAccion, Habil, GUIADA, DATOS, REGLAS, ALIAS, catalogoTexto, guiaTexto, preciosTexto, estadoGuiada, reglasControl, contextoVector, corregirOpciones, quitarExtras, sinNotas, intencionVisor, PIDE_VER, ORDEN_FUERTE, ES_PREGUNTA, norm }),
     get estado() { return App.estado; },
   };
 
