@@ -373,7 +373,7 @@ async function handleVoz(request, env, ctx) {
     if (ruta === '/api/voz/diagnostico' && request.method === 'GET') return json(await diagnostico(env), 200, cors);
     if (ruta === '/api/voz/estado' && request.method === 'GET') {
       return json({
-        ok: true, version: 2, build: '6.1',
+        ok: true, version: 2, build: '6.1.1',
         llm: !!(env.ANTHROPIC_API_KEY || env.AI || env.GROQ_API_KEY || env.GEMINI_API_KEY || env.MISTRAL_API_KEY),
         proveedor: env.ANTHROPIC_API_KEY ? 'claude' : env.AI ? 'workers-ai' : 'ninguno',
         tts: env.AZURE_SPEECH_KEY && env.AZURE_SPEECH_REGION ? 'azure' : 'navegador',
