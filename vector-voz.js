@@ -1065,7 +1065,10 @@
         if (this.raiz) this.raiz.dataset.midiendo = '';
         try {
           b = [...document.querySelectorAll('button,[role=button]')].find(e => {
-            if (e.closest('#vector-voz') || !/^(saltar (el )?(recorrido|introducci[oó]n|tour|ayuda)|entendido(,? continuar)?\s*[→›]?)$/i.test((e.innerText || '').trim()) || !visible(e)) return false;
+            const txt0 = (e.innerText || '').trim(), linea = txt0.split('\n')[0].trim();
+            // "¿Qué quieres hacer con tu proyecto?": si el usuario no pidió empezar de nuevo, se continúa (no borra nada)
+            const continuar = /^continuar donde me qued[eé]/i.test(linea) && !/proyecto nuevo|nuevo proyecto|desde cero|empezar de nuevo|empieza de nuevo|limpia|borra/i.test(this.consulta || '');
+            if (e.closest('#vector-voz') || !(continuar || /^(saltar (el )?(recorrido|introducci[oó]n|tour|ayuda)|entendido(,? continuar)?\s*[→›]?)$/i.test(txt0)) || !visible(e)) return false;
             // Si el usuario pidió el recorrido, no se cierra solo
             if (/^saltar/i.test((e.innerText || '').trim()) && this.pideRecorrido()) return false;
             const r = e.getBoundingClientRect(), t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
