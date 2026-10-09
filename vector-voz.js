@@ -1060,7 +1060,8 @@
     // Cierra recorridos de ayuda (no borran nada) para que Vera vea la pantalla real
     async despejarAyuda() {
       asentar();
-      for (let i = 0; i < 3; i++) {
+      let reviso = false;
+      for (let i = 0; i < 6; i++) {
         let b = null;
         if (this.raiz) this.raiz.dataset.midiendo = '';
         try {
@@ -1075,7 +1076,11 @@
             return t && (t === e || e.contains(t));
           });
         } finally { if (this.raiz) delete this.raiz.dataset.midiendo; }
-        if (!b) return;
+        if (!b) {
+          // Tras cerrar una bienvenida, Vector a veces abre el recorrido un instante después: se revisa una vez más
+          if (i > 0 && !reviso) { reviso = true; await espera(900); asentar(); continue; }
+          return;
+        }
         // Avisos informativos de Vector: se cierran, pero se guarda qué decían para contárselo al usuario
         if (/^entendido$/i.test(b.innerText.trim())) {
           const d = b.closest('[role=dialog],[aria-modal="true"],[class*=modal],[class*=dialog]') || b.parentElement.parentElement;
@@ -1747,6 +1752,8 @@
     async _escena(v) {
       instalarCaptura3D();
       if (!captura3D.escena) { await Gestos.arrastrar(v.c, 2, 0); await Gestos.arrastrar(v.c, -2, 0); await espera(150); }
+      if (!captura3D.escena) { window.dispatchEvent(new Event('resize')); await espera(250); }
+      if (!captura3D.escena) { v.c.dispatchEvent(new WheelEvent('wheel', { deltaY: 1, bubbles: true, cancelable: true, clientX: v.c.getBoundingClientRect().left + 10, clientY: v.c.getBoundingClientRect().top + 10 })); await espera(250); }
       return captura3D.escena && captura3D.camara ? { s: captura3D.escena, c: captura3D.camara } : null;
     },
     _elementos(sc) {
@@ -2794,7 +2801,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
           corregirOpciones(ui, textoUsuario);
           ui = quitarExtras(ui, textoUsuario);
           // Peticiones claras sobre el visor 3D ("desde atrás", "muéstrame la grúa", "¿qué elementos tiene?"): se cumplen aunque la IA se confunda
-          const iv = await intencionVisor(textoUsuario);
+          const iv = vuelta === 0 ? await intencionVisor(textoUsuario) : null; // solo en la primera respuesta (luego la IA continúa con lo que vio)
           if (iv && iv.tipo === 'vista' && !ui.some(a => a.tipo === 'vista')) ui = ui.filter(a => !['ir', 'opcion', 'dato', 'clic'].includes(a.tipo)).concat([parsearAccion('vista ' + iv.accion)]);
           else if (iv && iv.tipo === 'elemento' && !ui.some(a => a.tipo === 'elemento' && a.texto)) ui = ui.filter(a => a.tipo === 'vista').concat([parsearAccion('elemento ' + iv.texto)]);
           else if (iv && iv.tipo === 'lista') ui = [parsearAccion('elemento')];
