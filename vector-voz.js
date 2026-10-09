@@ -2810,7 +2810,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
           if (ui.some(a => a.tipo === 'dato' || a.tipo === 'opcion') && !PIDE_IR.test(textoUsuario)) ui = ui.filter(a => a.tipo !== 'ir');
           if (soloPregunta && !forzarVisor) ui = []; // a una pregunta se responde, no se actúa
           // Si la IA pide confirmación con sus palabras, no actúa todavía (la app confirma con botones cuando hay comando)
-          if (/¿\s*(confirm|quieres que|deseas que|lo env[ií]o|la env[ií]o|procedo|est[aá]s seguro|lo borro|la borro)/i.test(parte)) ui = [];
+          if (!forzarVisor && /¿\s*(confirm|quieres que|deseas que|lo env[ií]o|la env[ií]o|procedo|est[aá]s seguro|lo borro|la borro)/i.test(parte)) ui = [];
           const seguir0 = acciones.some(a => a.tipo === 'seguir');
           // Verificación: pidió una acción, la respuesta no trae comandos y no es una pregunta → corrige una vez
           if (esOrden && !reintento && !this.ultimoError && !ui.length && !seguir0 && !/[?¿]\s*\)?\s*$/.test(parte.trim())) {
