@@ -1,0 +1,14 @@
+# Publicación automática del Worker de Vera (Cloudflare Workers Builds)
+name = "vera-voz"
+main = "vera-voz-worker.js"
+compatibility_date = "2025-06-01"
+workers_dev = true
+# Conserva las variables de texto creadas en el panel de Cloudflare (los Secrets nunca se tocan)
+keep_vars = true
+
+# IA gratuita de Cloudflare (respaldo final de Vera)
+[ai]
+binding = "AI"
+
+[observability]
+enabled = true
