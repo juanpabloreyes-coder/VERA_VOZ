@@ -128,7 +128,7 @@
   .vvz-send{width:38px;height:38px;flex:none;border-radius:50%;border:0;background:var(--navy);color:#fff;display:grid;place-items:center;transition:opacity .2s}
   .vvz-send:disabled{opacity:.35;cursor:default}
   .vvz-foot{margin:8px 4px 0;font-size:11px;color:var(--muted)}
-  .vvz-toast{position:absolute;left:50%;bottom:18px;transform:translate(-50%,10px);background:var(--ink);color:#fff;font-size:13px;padding:9px 16px;border-radius:999px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:90%;text-align:center;z-index:5}
+  .vvz-toast{position:absolute;left:50%;bottom:18px;transform:translate(-50%,10px);background:#1D5FBF;color:#fff;font-size:13px;padding:9px 16px;border-radius:999px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:90%;text-align:center;z-index:5}
   .vvz-toast.ver{opacity:1;transform:translate(-50%,0)}
 
   /* --- modo compacto: Vera flota y deja ver/usar la app --- */
@@ -153,16 +153,16 @@
   /* --- resaltado de lo que Vera opera --- */
   .vvz-foco{position:fixed;z-index:2147482400;pointer-events:none;border-radius:10px;border:2px solid #5e8dff;box-shadow:0 0 0 4px rgba(94,141,255,.22),0 0 26px rgba(94,141,255,.55);opacity:0;transition:opacity .25s,left .35s,top .35s,width .35s,height .35s}
   .vvz-foco.ver{opacity:1}
-  .vvz-foco i{position:absolute;left:-2px;top:-24px;font:600 11px/1 -apple-system,"Segoe UI",sans-serif;font-style:normal;color:#fff;background:linear-gradient(135deg,#4fb7ff,#7a5cff);padding:5px 8px;border-radius:7px 7px 7px 2px;white-space:nowrap}
+  .vvz-foco i{position:absolute;left:-2px;top:-24px;font:600 11px/1 -apple-system,"Segoe UI",sans-serif;font-style:normal;color:#fff;background:linear-gradient(135deg,#1D5FBF,#0E8A66);padding:5px 8px;border-radius:7px 7px 7px 2px;white-space:nowrap}
   .vvz[data-midiendo] *{pointer-events:none!important}
 
   /* --- acciones y confirmaciones en el chat --- */
   .vvz-acc{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-  .vvz-acc span{display:inline-flex;align-items:center;gap:5px;font-size:12px;line-height:1.3;color:var(--blue);background:#eaf1f7;border:1px solid #d6e3ee;border-radius:999px;padding:3px 10px}
+  .vvz-acc span{display:inline-flex;align-items:center;gap:5px;font-size:12px;line-height:1.3;color:#0B5E47;background:#E8F7F1;border:1px solid #BFE6D6;border-radius:999px;padding:3px 10px}
   .vvz-acc span.mal{color:#8a4a41;background:#fbf1ef;border-color:#ecd2cd}
   .vvz-conf{display:flex;gap:8px;margin-top:10px}
   .vvz-conf button{border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--ink)}
-  .vvz-conf button.si{background:#a85a50;border-color:#a85a50;color:#fff}
+  .vvz-conf button.si{background:#0E8A66;border-color:#0E8A66;color:#fff}
 
   /* --- panel de memoria --- */
   .vvz-mem{position:absolute;inset:0;z-index:6;background:#fff;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);visibility:hidden}
@@ -282,7 +282,7 @@
   /* ===================================================================
      3. NÚCLEO DE PARTÍCULAS (esfera de puntos cian → azul → violeta)
      =================================================================== */
-  const PALETA = [[92,232,255],[70,200,255],[58,160,255],[52,120,255],[58,90,255],[82,72,255],[112,66,255],[146,70,255],[176,74,250],[204,78,240],[226,84,228],[240,96,214]];
+  const PALETA = [[244,251,255],[200,232,255],[142,197,255],[63,134,224],[29,95,191],[24,120,170],[14,138,102],[20,160,118],[52,196,143],[110,220,180],[168,240,210],[230,252,244]];
   const NB = PALETA.length, ND = 4;
   const ALFA = [0.2, 0.42, 0.72, 1];
   const TAM = [0.9, 1.15, 1.45, 1.9];
@@ -2550,7 +2550,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
         },
       };
 
-      this.orbe = new Orbe(this.el.orbCv, { puntos: innerWidth < 700 ? 1900 : 3200, polvo: innerWidth < 700 ? 160 : 300 });
+      this.orbe = new Orbe(this.el.orbCv, { puntos: innerWidth < 700 ? 3400 : 6500, polvo: innerWidth < 700 ? 300 : 600 });
       if (this.el.launch) { this.mini = new Orbe(this.el.launch.querySelector('canvas'), { mini: true, puntos: 520, polvo: 0 }); this.mini.start(); }
 
       this.voz = new Voz({ inicioFrase: f => this._alHablarFrase(f), finTurno: () => this._alTerminarDeHablar() });
