@@ -128,7 +128,7 @@
   .vvz-send{width:38px;height:38px;flex:none;border-radius:50%;border:0;background:var(--navy);color:#fff;display:grid;place-items:center;transition:opacity .2s}
   .vvz-send:disabled{opacity:.35;cursor:default}
   .vvz-foot{margin:8px 4px 0;font-size:11px;color:var(--muted)}
-  .vvz-toast{position:absolute;left:50%;bottom:18px;transform:translate(-50%,10px);background:#1D5FBF;color:#fff;font-size:13px;padding:9px 16px;border-radius:999px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:90%;text-align:center;z-index:5}
+  .vvz-toast{position:absolute;left:50%;bottom:18px;transform:translate(-50%,10px);background:#fff;color:#0F2338;border:1px solid #D6E4F5;box-shadow:0 6px 18px rgba(20,41,59,.14);font-size:13px;padding:9px 16px;border-radius:999px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:90%;text-align:center;z-index:5}
   .vvz-toast.ver{opacity:1;transform:translate(-50%,0)}
 
   /* --- modo compacto: Vera flota y deja ver/usar la app --- */
@@ -229,6 +229,19 @@
   .vvz.compacto .vvz-mic svg{width:21px;height:21px}
   .vvz.compacto .vvz-ctrl{width:34px;height:34px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
   @media (max-width:700px){.vvz.compacto .vvz-backdrop{padding:0}.vvz.compacto .vvz-modal{width:auto;height:auto;border-radius:0}}
+  /* --- flotante: botones sin fondo, con color del tema y halo blanco; aviso legible; conjunto arrastrable --- */
+  .vvz.compacto .vvz-toast{top:-46px;bottom:auto;width:max-content;max-width:250px;font-size:12px;line-height:1.35;padding:7px 12px;border-radius:12px;white-space:normal;text-align:left;color:#0F2338;background:#fff}
+  .vvz.compacto .vvz-head .vvz-icon-btn{background:transparent;border:0;box-shadow:none;color:#1D5FBF;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+  .vvz.compacto .vvz-head .vvz-icon-btn:hover{background:transparent;color:#0E8A66}
+  .vvz.compacto .vvz-ctrl{width:40px;height:40px;background:transparent;border:0;box-shadow:none;color:#1D5FBF;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+  .vvz.compacto .vvz-ctrl[aria-pressed=true]{background:transparent;border:0;color:#0E8A66}
+  .vvz.compacto .vvz-ctrl svg{width:20px;height:20px}
+  .vvz.compacto .vvz-mic{width:58px;height:58px;background:transparent;box-shadow:none;color:#0E8A66;filter:drop-shadow(0 0 3px #fff) drop-shadow(0 1px 3px rgba(0,0,0,.3))}
+  .vvz.compacto .vvz-mic[aria-pressed=true]{background:transparent;box-shadow:none;color:#1D5FBF}
+  .vvz.compacto .vvz-mic svg{width:26px;height:26px}
+  .vvz.compacto .vvz-stage{cursor:grab}
+  .vvz.compacto .vvz-modal.arrastrando{transition:none}
+  .vvz.compacto .vvz-stage:active{cursor:grabbing}
   @media (prefers-reduced-motion:reduce){.vvz *{animation:none!important;transition:none!important}}
   `;
 
@@ -2605,6 +2618,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       E.modal.querySelector('.vvz-cerrar').addEventListener('click', () => this.cerrar());
       E.modal.querySelector('.vvz-nuevo').addEventListener('click', () => this.nueva());
       E.btnTam.addEventListener('click', () => this.setCompacto(!this.compacto));
+      this._arrastre();
       E.modal.querySelector('.vvz-btn-mem').addEventListener('click', () => this.verMemoria(true));
       E.modal.querySelector('.vvz-mem-cerrar').addEventListener('click', () => this.verMemoria(false));
       E.mic.addEventListener('click', () => this.alternarMic());
@@ -2715,6 +2729,8 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
     _flotante() {
       clearInterval(this._tFlot);
       if (!this.compacto) { this.el.modal.style.left = ''; this.el.modal.style.top = ''; return; }
+      this.posManual = !!this.posFija;
+      if (this.posFija) { this.el.modal.style.left = this.posFija.l + 'px'; this.el.modal.style.top = this.posFija.t + 'px'; }
       this._colocar();
       this._tFlot = setInterval(() => this._colocar(), 1200);
     },
@@ -2722,6 +2738,12 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
     _colocar() {
       if (!this.compacto || !this.abierto) return;
       const m = this.el.modal;
+      if (this.posManual) {
+        const bw0 = m.offsetWidth, bh0 = m.offsetHeight;
+        m.style.left = Math.min(Math.max(0, parseFloat(m.style.left) || 0), innerWidth - bw0) + 'px';
+        m.style.top = Math.min(Math.max(0, parseFloat(m.style.top) || 0), innerHeight - bh0) + 'px';
+        return;
+      }
       if (m.matches(':hover')) return;
       const r0 = m.getBoundingClientRect(); const bw = r0.width, bh = r0.height;
       if (!bw || !bh) return;
@@ -2756,6 +2778,32 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       if (!isNaN(actX) && !isNaN(actY) && costo(actX, actY) - mejor.c < 2500) return; // histéresis: solo se mueve si hay una zona claramente mejor
       m.style.left = Math.max(0, mejor.x) + 'px';
       m.style.top = Math.max(0, mejor.y) + 'px';
+    },
+    _arrastre() {
+      const m = this.el.modal; let arr = null, movido = false;
+      m.addEventListener('pointerdown', e => {
+        if (!this.compacto || e.button !== 0 || e.target.closest('input,textarea')) return;
+        const r = m.getBoundingClientRect();
+        arr = { x: e.clientX, y: e.clientY, l: r.left, t: r.top }; movido = false;
+      });
+      window.addEventListener('pointermove', e => {
+        if (!arr) return;
+        const dx = e.clientX - arr.x, dy = e.clientY - arr.y;
+        if (!movido && Math.hypot(dx, dy) < 5) return;
+        if (!movido) m.classList.add('arrastrando');
+        movido = true; this.posManual = true;
+        m.style.left = Math.min(Math.max(0, arr.l + dx), innerWidth - m.offsetWidth) + 'px';
+        m.style.top = Math.min(Math.max(0, arr.t + dy), innerHeight - m.offsetHeight) + 'px';
+      });
+      window.addEventListener('pointerup', () => {
+        if (arr && movido) {
+          this._sinClic = true; setTimeout(() => (this._sinClic = false), 60);
+          m.classList.remove('arrastrando');
+          this.posFija = { l: parseFloat(m.style.left), t: parseFloat(m.style.top) };
+        }
+        arr = null;
+      });
+      m.addEventListener('click', e => { if (this._sinClic) { e.stopPropagation(); e.preventDefault(); } }, true);
     },
     verMemoria(b) { this.el.mem.classList.toggle('ver', !!b); if (b) { this._pintarMemoria(); this.el.mem.querySelector('.vvz-mem-cerrar').focus(); } },
 
