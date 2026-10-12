@@ -223,11 +223,17 @@
   .vvz.compacto .vvz-head>div:first-child{display:none}
   .vvz.compacto .vvz-head .vvz-icon-btn{width:28px;height:28px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
   .vvz.compacto .vvz-body{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;background:transparent;pointer-events:none;grid-template-columns:none;grid-template-rows:none}
-  .vvz.compacto .vvz-stage{margin:0;width:200px;height:200px;flex:none;background:transparent;border-radius:0;box-shadow:none;overflow:visible;pointer-events:auto;isolation:auto}
+  .vvz.compacto .vvz-stage{margin:0;width:240px;height:240px;flex:none;background:transparent;border-radius:0;box-shadow:none;overflow:visible;pointer-events:auto;isolation:auto}
   .vvz.compacto .vvz-stage::before,.vvz.compacto .vvz-stage::after{display:none}
-  .vvz.compacto .vvz-orb{position:absolute;inset:0;width:200px;height:200px;pointer-events:auto}
+  .vvz.compacto .vvz-orb{position:absolute;inset:0;width:240px;height:240px;pointer-events:auto}
   .vvz.compacto .vvz-status,.vvz.compacto .vvz-caption,.vvz.compacto .vvz-demo,.vvz.compacto .vvz-hint,.vvz.compacto .vvz-chat{display:none!important}
-  .vvz.compacto .vvz-controls{margin:0;gap:10px;pointer-events:auto}
+  /* V5_362 · los 4 botones se reparten alrededor de la esfera en vez de ir en fila arriba */
+  .vvz.compacto .vvz-controls{position:absolute;inset:0;margin:0;gap:0;pointer-events:none}
+  .vvz.compacto .vvz-controls>*{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;margin:0}
+  .vvz.compacto .vvz-btn-cont{left:10%;top:9%}
+  .vvz.compacto .vvz-btn-chat{left:90%;top:15%}
+  .vvz.compacto .vvz-btn-voz{left:9%;top:42%}
+  .vvz.compacto .vvz-mic{left:34%;top:66%}
   .vvz.compacto .vvz-mic{width:54px;height:54px}
   .vvz.compacto .vvz-mic svg{width:21px;height:21px}
   .vvz.compacto .vvz-ctrl{width:34px;height:34px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
@@ -264,6 +270,7 @@
     basura: '<svg viewBox="0 0 24 24"><path d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
     clic: '<svg viewBox="0 0 24 24"><path d="M9 9l11 4-5 2-2 5z"/><path d="M5 3v3M3 5h3M5.5 9.5 4 11"/></svg>',
     teclado: '<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01M11 10h.01M15 10h.01M7 14h10"/></svg>',
+    chat: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-4 4V5z"/><path d="M8 9h8M8 12.5h5"/></svg>',
   };
 
   /* ===================================================================
@@ -2543,6 +2550,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
                   <button class="vvz-ctrl vvz-btn-voz" type="button"></button>
                   <button class="vvz-mic" type="button" aria-pressed="false" aria-label="Hablar">${ICON.mic}</button>
                   <button class="vvz-ctrl vvz-btn-cont" type="button" title="Conversación continua: vuelvo a escucharte al terminar de hablar">${ICON.loop}</button>
+                  <button class="vvz-ctrl vvz-btn-chat" type="button" title="Ver conversación completa" aria-label="Ver conversación completa">${ICON.chat}</button>
                 </div>
                 <div class="vvz-hint">Pídeme que opere Vector por ti · Interrúmpeme hablando o tocando el núcleo</div>
               </div>
@@ -2578,7 +2586,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       const $ = s => raiz.querySelector(s);
       this.el = {
         raiz, launch: $('.vvz-launch'), back: $('.vvz-backdrop'), modal: $('.vvz-modal'), log: $('.vvz-log'), form: $('.vvz-input'),
-        ta: $('.vvz-input textarea'), send: $('.vvz-send'), mic: $('.vvz-mic'), btnVoz: $('.vvz-btn-voz'), btnCont: $('.vvz-btn-cont'), btnTam: $('.vvz-btn-tam'),
+        ta: $('.vvz-input textarea'), send: $('.vvz-send'), mic: $('.vvz-mic'), btnVoz: $('.vvz-btn-voz'), btnCont: $('.vvz-btn-cont'), btnTam: $('.vvz-btn-tam'), btnChat: $('.vvz-btn-chat'),
         status: $('.vvz-status span'), caption: $('.vvz-caption'), demo: $('.vvz-demo'), toast: $('.vvz-toast'), orbCv: $('.vvz-orb'),
         mem: $('.vvz-mem'), memHechos: $('.vvz-mem-hechos'), memRes: $('.vvz-mem-res'), memActiva: $('.vvz-mem-activa'), memBorrar: $('.vvz-mem-borrar'), foco: $('.vvz-foco'),
       };
@@ -2626,6 +2634,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       E.modal.querySelector('.vvz-cerrar').addEventListener('click', () => this.cerrar());
       E.modal.querySelector('.vvz-nuevo').addEventListener('click', () => this.nueva());
       E.btnTam.addEventListener('click', () => this.setCompacto(!this.compacto));
+      if (E.btnChat) E.btnChat.addEventListener('click', () => this.setCompacto(false));
       this._arrastre();
       E.modal.querySelector('.vvz-btn-mem').addEventListener('click', () => this.verMemoria(true));
       E.modal.querySelector('.vvz-mem-cerrar').addEventListener('click', () => this.verMemoria(false));
