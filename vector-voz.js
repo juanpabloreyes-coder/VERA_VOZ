@@ -245,16 +245,6 @@
   .vvz.compacto .vvz-stage{cursor:grab}
   .vvz.compacto .vvz-modal.arrastrando{transition:none}
   .vvz.compacto .vvz-stage:active{cursor:grabbing}
-  /* V5_355 · tamaño mínimo de Vera (solo la esfera) y botón para alternar mínimo/medio */
-  .vvz.compacto.vvz-minimo .vvz-controls,.vvz.compacto.vvz-minimo .vvz-toast{display:none!important}
-  .vvz.compacto.vvz-minimo .vvz-stage{transform:scale(.62);transform-origin:50% 50%}
-  .vvz-minimo-label{display:none}
-  .vvz.compacto.vvz-minimo .vvz-minimo-label{display:flex;flex-direction:column;align-items:center;gap:1px;position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:6px;white-space:nowrap;pointer-events:none}
-  .vvz.compacto.vvz-minimo .vvz-minimo-label strong{font-size:12px;font-weight:700;letter-spacing:.04em;color:#1D5FBF;filter:drop-shadow(0 1px 2px rgba(255,255,255,.9)) drop-shadow(0 0 3px #fff)}
-  .vvz.compacto.vvz-minimo .vvz-minimo-label span{font-size:10.5px;font-weight:600;color:#405968;filter:drop-shadow(0 1px 2px rgba(255,255,255,.9)) drop-shadow(0 0 3px #fff)}
-  .vvz:not(.compacto) .vvz-btn-medida{display:none}
-  .vvz .vvz-btn-medida svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
-  .vvz.compacto .vvz-btn-medida{width:28px;height:28px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
   @media (prefers-reduced-motion:reduce){.vvz *{animation:none!important;transition:none!important}}
   `;
 
@@ -2539,7 +2529,6 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
               <div class="vvz-head-actions">
                 <button class="vvz-icon-btn vvz-btn-mem" type="button" aria-label="Lo que Vera recuerda" title="Lo que Vera recuerda">${ICON.memoria}</button>
                 <button class="vvz-chip-btn vvz-nuevo" type="button" title="Nueva conversación">${ICON.nuevo}<span>Nueva conversación</span></button>
-                <button class="vvz-icon-btn vvz-btn-medida" type="button"></button>
                 <button class="vvz-icon-btn vvz-btn-tam" type="button"></button>
                 <button class="vvz-icon-btn vvz-cerrar" type="button" aria-label="Cerrar asistente">${ICON.cerrar}</button>
               </div>
@@ -2547,7 +2536,6 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
             <div class="vvz-body">
               <div class="vvz-stage">
                 <canvas class="vvz-orb" aria-label="Núcleo de ${esc(CFG.nombre)}. Tócalo para hablar o interrumpir." role="button" tabindex="-1"></canvas>
-                <div class="vvz-minimo-label" aria-hidden="true"><strong>${esc(CFG.nombre).toUpperCase()}</strong><span>Asistente de Voz</span></div>
                 <div class="vvz-status" aria-live="polite"><i></i><span>${ESTADOS.reposo}</span></div>
                 <div class="vvz-demo" hidden>Modo demostración · sin conexión con el servidor</div>
                 <p class="vvz-caption tenue">Toca el micrófono y pídeme lo que necesites.</p>
@@ -2590,7 +2578,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       const $ = s => raiz.querySelector(s);
       this.el = {
         raiz, launch: $('.vvz-launch'), back: $('.vvz-backdrop'), modal: $('.vvz-modal'), log: $('.vvz-log'), form: $('.vvz-input'),
-        ta: $('.vvz-input textarea'), send: $('.vvz-send'), mic: $('.vvz-mic'), btnVoz: $('.vvz-btn-voz'), btnCont: $('.vvz-btn-cont'), btnTam: $('.vvz-btn-tam'), btnMedida: $('.vvz-btn-medida'),
+        ta: $('.vvz-input textarea'), send: $('.vvz-send'), mic: $('.vvz-mic'), btnVoz: $('.vvz-btn-voz'), btnCont: $('.vvz-btn-cont'), btnTam: $('.vvz-btn-tam'),
         status: $('.vvz-status span'), caption: $('.vvz-caption'), demo: $('.vvz-demo'), toast: $('.vvz-toast'), orbCv: $('.vvz-orb'),
         mem: $('.vvz-mem'), memHechos: $('.vvz-mem-hechos'), memRes: $('.vvz-mem-res'), memActiva: $('.vvz-mem-activa'), memBorrar: $('.vvz-mem-borrar'), foco: $('.vvz-foco'),
       };
@@ -2638,7 +2626,6 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       E.modal.querySelector('.vvz-cerrar').addEventListener('click', () => this.cerrar());
       E.modal.querySelector('.vvz-nuevo').addEventListener('click', () => this.nueva());
       E.btnTam.addEventListener('click', () => this.setCompacto(!this.compacto));
-      E.btnMedida.addEventListener('click', () => this.setMedida(store.get('vvz-medida', 'minimo') === 'medio' ? 'minimo' : 'medio'));
       this._arrastre();
       E.modal.querySelector('.vvz-btn-mem').addEventListener('click', () => this.verMemoria(true));
       E.modal.querySelector('.vvz-mem-cerrar').addEventListener('click', () => this.verMemoria(false));
@@ -2709,6 +2696,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
 
     abrir() {
       if (this.abierto) return;
+      if (!this.compacto) this.setCompacto(true, true);
       this.abierto = true; this.ultimoFoco = document.activeElement;
       const E = this.el;
       E.back.classList.add('abierto'); E.back.setAttribute('aria-hidden', 'false');
@@ -2738,24 +2726,9 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       this._renderHistorial(); this.setEstado('reposo');
       this.caption('Empecemos de nuevo. ¿En qué te ayudo?', true);
     },
-    setMedida(m) {
-      store.set('vvz-medida', m === 'medio' ? 'medio' : 'minimo');
-      this._pintarMedida();
-      this.el.raiz.classList.toggle('vvz-minimo', this.compacto && store.get('vvz-medida', 'minimo') !== 'medio');
-      this._colocar();
-      setTimeout(() => this.orbe.resize(), 330);
-    },
-    _pintarMedida() {
-      const medio = store.get('vvz-medida', 'minimo') === 'medio';
-      this.el.btnMedida.innerHTML = medio ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>' : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>';
-      this.el.btnMedida.setAttribute('aria-label', medio ? 'Cambiar a tamaño mínimo' : 'Cambiar a tamaño medio');
-      this.el.btnMedida.title = medio ? 'Tamaño mínimo (solo la esfera)' : 'Tamaño medio (esfera y botones)';
-    },
     setCompacto(b, auto) {
       this.compacto = !!b;
       this.el.raiz.classList.toggle('compacto', this.compacto);
-      this.el.raiz.classList.toggle('vvz-minimo', this.compacto && store.get('vvz-medida', 'minimo') !== 'medio');
-      this._pintarMedida();
       this.el.modal.setAttribute('aria-modal', String(!this.compacto));
       this._pintarBotones();
       setTimeout(() => this.orbe.resize(), 330);
