@@ -213,6 +213,22 @@
     .vvz.compacto .vvz-body{grid-template-rows:1fr}
     .vvz.compacto .vvz-stage{margin:0 8px 8px}
   }
+  /* --- modo flotante (compacto): solo la esfera y los botones, sin fondo; se acomoda en una zona libre --- */
+  .vvz.compacto .vvz-backdrop{padding:0;display:block;background:transparent;pointer-events:none}
+  .vvz.compacto .vvz-modal{position:fixed;left:auto;top:auto;right:auto;bottom:auto;width:auto;height:auto;background:transparent;border:0;box-shadow:none;border-radius:0;overflow:visible;pointer-events:none;transition:left .6s cubic-bezier(.2,.8,.2,1),top .6s cubic-bezier(.2,.8,.2,1)}
+  .vvz.compacto .vvz-head{position:absolute;top:-8px;right:-8px;padding:0;border:0;background:transparent;gap:6px;z-index:3;pointer-events:auto}
+  .vvz.compacto .vvz-head>div:first-child{display:none}
+  .vvz.compacto .vvz-head .vvz-icon-btn{width:28px;height:28px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
+  .vvz.compacto .vvz-body{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;background:transparent;pointer-events:none;grid-template-columns:none;grid-template-rows:none}
+  .vvz.compacto .vvz-stage{margin:0;width:200px;height:200px;flex:none;background:transparent;border-radius:0;box-shadow:none;overflow:visible;pointer-events:auto;isolation:auto}
+  .vvz.compacto .vvz-stage::before,.vvz.compacto .vvz-stage::after{display:none}
+  .vvz.compacto .vvz-orb{position:absolute;inset:0;width:200px;height:200px;pointer-events:auto}
+  .vvz.compacto .vvz-status,.vvz.compacto .vvz-caption,.vvz.compacto .vvz-demo,.vvz.compacto .vvz-hint,.vvz.compacto .vvz-chat{display:none!important}
+  .vvz.compacto .vvz-controls{margin:0;gap:10px;pointer-events:auto}
+  .vvz.compacto .vvz-mic{width:54px;height:54px}
+  .vvz.compacto .vvz-mic svg{width:21px;height:21px}
+  .vvz.compacto .vvz-ctrl{width:34px;height:34px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
+  @media (max-width:700px){.vvz.compacto .vvz-backdrop{padding:0}.vvz.compacto .vvz-modal{width:auto;height:auto;border-radius:0}}
   @media (prefers-reduced-motion:reduce){.vvz *{animation:none!important;transition:none!important}}
   `;
 
@@ -2693,7 +2709,53 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       this.el.modal.setAttribute('aria-modal', String(!this.compacto));
       this._pintarBotones();
       setTimeout(() => this.orbe.resize(), 330);
+      this._flotante();
       if (!auto) this._scroll();
+    },
+    _flotante() {
+      clearInterval(this._tFlot);
+      if (!this.compacto) { this.el.modal.style.left = ''; this.el.modal.style.top = ''; return; }
+      this._colocar();
+      this._tFlot = setInterval(() => this._colocar(), 1200);
+    },
+    // Busca la esquina o borde de la pantalla donde la esfera tape menos texto, botones o modelos de Vector
+    _colocar() {
+      if (!this.compacto || !this.abierto) return;
+      const m = this.el.modal;
+      if (m.matches(':hover')) return;
+      const r0 = m.getBoundingClientRect(); const bw = r0.width, bh = r0.height;
+      if (!bw || !bh) return;
+      const vw = innerWidth, vh = innerHeight, M = 14;
+      const obs = [];
+      document.querySelectorAll('a,button,input,select,textarea,label,h1,h2,h3,h4,p,li,td,th,img,svg,canvas,video,iframe,[role=button],[role=tab],[role=menuitem],[role=option],[role=dialog],[role=img],[role=alert],[role=status]').forEach(e => {
+        if (e.closest('#vector-voz')) return;
+        const r = e.getBoundingClientRect();
+        if (r.width < 2 || r.height < 2 || r.right < 0 || r.bottom < 0 || r.left > vw || r.top > vh) return;
+        const cs = getComputedStyle(e);
+        if (cs.visibility === 'hidden' || cs.display === 'none' || +cs.opacity === 0) return;
+        obs.push({ l: r.left, t: r.top, r: r.right, b: r.bottom, w: e.matches('a,button,input,select,textarea,[role=button],[role=tab],[role=menuitem]') ? 2 : 1 });
+      });
+      const costo = (x, y) => {
+        let c = 0;
+        for (const o of obs) {
+          const ix = Math.min(x + bw, o.r) - Math.max(x, o.l); if (ix <= 0) continue;
+          const iy = Math.min(y + bh, o.b) - Math.max(y, o.t); if (iy <= 0) continue;
+          c += ix * iy * o.w;
+        }
+        return c;
+      };
+      const cands = [
+        ['abajo-derecha', vw - bw - M, vh - bh - M], ['abajo-izquierda', M, vh - bh - M],
+        ['arriba-derecha', vw - bw - M, M], ['arriba-izquierda', M, M],
+        ['centro-derecha', vw - bw - M, (vh - bh) / 2], ['centro-izquierda', M, (vh - bh) / 2],
+        ['abajo-centro', (vw - bw) / 2, vh - bh - M], ['arriba-centro', (vw - bw) / 2, M]
+      ];
+      let mejor = null;
+      for (const [, x, y] of cands) { const c = costo(x, y); if (!mejor || c < mejor.c - 1) mejor = { x, y, c }; }
+      const actX = parseFloat(m.style.left), actY = parseFloat(m.style.top);
+      if (!isNaN(actX) && !isNaN(actY) && costo(actX, actY) - mejor.c < 2500) return; // histéresis: solo se mueve si hay una zona claramente mejor
+      m.style.left = Math.max(0, mejor.x) + 'px';
+      m.style.top = Math.max(0, mejor.y) + 'px';
     },
     verMemoria(b) { this.el.mem.classList.toggle('ver', !!b); if (b) { this._pintarMemoria(); this.el.mem.querySelector('.vvz-mem-cerrar').focus(); } },
 
