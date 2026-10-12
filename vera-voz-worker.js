@@ -487,7 +487,8 @@ Guarda solo datos DURABLES y útiles para futuras conversaciones, que el USUARIO
 NO guardes:
 - la configuración del proyecto en Vector (áreas, metros cuadrados, opciones elegidas, materiales, grúas, tapial, montos, presupuesto meta, pasos visitados): Vector ya la guarda y cambia a cada rato;
 - órdenes que el usuario le dio a Vera ni lo que Vera hizo o dijo; saludos, pruebas, datos pasajeros, suposiciones ni inferencias sobre su forma de trabajar;
-- datos sensibles (salud, finanzas personales, contraseñas, documentos de identidad).
+- datos sensibles (salud, finanzas personales, contraseñas, documentos de identidad);
+- preferencias sobre opciones configurables de Vector (presupuesto a precio alzado, tipo de cubierta, nivel de acabados, o cualquier opción de la app) y ubicaciones buscadas o marcadas en el mapa: configurar algo en la app no significa que le guste, lo prefiera ni que viva ahí; solo cuenta lo que el usuario aclare explícitamente.
 Fusiona y actualiza: si un dato cambió, reemplázalo; elimina duplicados y cualquier dato de la MEMORIA ACTUAL que sea configuración del proyecto; máximo 30 datos, cada uno en una frase corta en español (máx. 140 caracteres), en tercera persona ("Se llama Juan Pablo", "Le interesa…"), en texto plano sin markdown ni asteriscos.
 Además escribe un "resumen" de 1 frase sobre de qué trató la conversación (sin cifras del proyecto).
 Responde SOLO con JSON válido, sin texto extra: {"hechos": ["..."], "resumen": "..."}`;
