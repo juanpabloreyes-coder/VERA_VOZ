@@ -2619,6 +2619,10 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       this._pintarMemoria();
       this._detectarBackend();
       this._bucleAudio();
+      this._colocarLanzador();
+      window.addEventListener('resize', () => this._colocarLanzador());
+      window.addEventListener('scroll', () => this._colocarLanzador(), true);
+      this._tLanzador = setInterval(() => this._colocarLanzador(), 1000);
       // Consolida lo que haya quedado pendiente de visitas anteriores
       setTimeout(() => { const ult = this.historial[this.historial.length - 1]; if (ult && Date.now() - (ult.ts || 0) > 90_000) Memoria.consolidar(this.historial); }, 5000);
     },
@@ -2763,6 +2767,19 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       this._tFlot = setInterval(() => this._colocar(), 1200);
     },
     // Busca la esquina o borde de la pantalla donde la esfera tape menos texto, botones o modelos de Vector
+    // V5_360 · el icono cerrado de Vera (antes de abrir) se centra bajo Top 5 partidas (#gVeraSlot)
+    _colocarLanzador() {
+      const btn = this.el.launch;
+      if (!btn || this.compacto || this.abierto) return;
+      const slot = document.getElementById('gVeraSlot');
+      if (!slot) { btn.style.left = ''; btn.style.top = ''; btn.style.right = ''; btn.style.bottom = ''; return; }
+      const q = slot.getBoundingClientRect();
+      if (q.width < 10 || q.height < 10) return;
+      const bw = btn.offsetWidth || 60, bh = btn.offsetHeight || 60;
+      btn.style.right = 'auto'; btn.style.bottom = 'auto';
+      btn.style.left = Math.round(q.left + (q.width - bw) / 2) + 'px';
+      btn.style.top = Math.round(q.top + (q.height - bh) / 2) + 'px';
+    },
     _colocar() {
       if (!this.compacto) return;
       const m = this.el.modal;
