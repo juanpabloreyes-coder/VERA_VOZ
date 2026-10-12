@@ -219,7 +219,7 @@
   /* --- modo flotante (compacto): solo la esfera y los botones, sin fondo; se acomoda en una zona libre --- */
   .vvz.compacto .vvz-backdrop{padding:0;display:block;background:transparent;pointer-events:none}
   .vvz.compacto .vvz-modal{position:fixed;left:auto;top:auto;right:auto;bottom:auto;width:auto;height:auto;background:transparent;border:0;box-shadow:none;border-radius:0;overflow:visible;pointer-events:none;transition:left .6s cubic-bezier(.2,.8,.2,1),top .6s cubic-bezier(.2,.8,.2,1)}
-  .vvz.compacto .vvz-head{position:absolute;top:-8px;right:-8px;padding:0;border:0;background:transparent;gap:6px;z-index:3;pointer-events:auto}
+  .vvz.compacto .vvz-head{position:absolute;top:4px;right:4px;padding:0;border:0;background:transparent;gap:6px;z-index:3;pointer-events:auto}
   .vvz.compacto .vvz-head>div:first-child{display:none}
   .vvz.compacto .vvz-head .vvz-icon-btn{width:28px;height:28px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
   .vvz.compacto .vvz-body{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;background:transparent;pointer-events:none;grid-template-columns:none;grid-template-rows:none}
@@ -230,10 +230,9 @@
   /* V5_362 · los 4 botones se reparten alrededor de la esfera en vez de ir en fila arriba */
   .vvz.compacto .vvz-controls{position:absolute;inset:0;margin:0;gap:0;pointer-events:none}
   .vvz.compacto .vvz-controls>*{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;margin:0}
-  .vvz.compacto .vvz-btn-cont{left:10%;top:9%}
-  .vvz.compacto .vvz-btn-chat{left:90%;top:15%}
-  .vvz.compacto .vvz-btn-voz{left:9%;top:42%}
-  .vvz.compacto .vvz-mic{left:34%;top:66%}
+  .vvz.compacto .vvz-btn-cont{left:12%;top:11%}
+  .vvz.compacto .vvz-btn-voz{left:10%;top:44%}
+  .vvz.compacto .vvz-mic{left:34%;top:68%}
   .vvz.compacto .vvz-mic{width:54px;height:54px}
   .vvz.compacto .vvz-mic svg{width:21px;height:21px}
   .vvz.compacto .vvz-ctrl{width:34px;height:34px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
@@ -2550,7 +2549,6 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
                   <button class="vvz-ctrl vvz-btn-voz" type="button"></button>
                   <button class="vvz-mic" type="button" aria-pressed="false" aria-label="Hablar">${ICON.mic}</button>
                   <button class="vvz-ctrl vvz-btn-cont" type="button" title="Conversación continua: vuelvo a escucharte al terminar de hablar">${ICON.loop}</button>
-                  <button class="vvz-ctrl vvz-btn-chat" type="button" title="Ver conversación completa" aria-label="Ver conversación completa">${ICON.chat}</button>
                 </div>
                 <div class="vvz-hint">Pídeme que opere Vector por ti · Interrúmpeme hablando o tocando el núcleo</div>
               </div>
@@ -2586,7 +2584,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       const $ = s => raiz.querySelector(s);
       this.el = {
         raiz, launch: $('.vvz-launch'), back: $('.vvz-backdrop'), modal: $('.vvz-modal'), log: $('.vvz-log'), form: $('.vvz-input'),
-        ta: $('.vvz-input textarea'), send: $('.vvz-send'), mic: $('.vvz-mic'), btnVoz: $('.vvz-btn-voz'), btnCont: $('.vvz-btn-cont'), btnTam: $('.vvz-btn-tam'), btnChat: $('.vvz-btn-chat'),
+        ta: $('.vvz-input textarea'), send: $('.vvz-send'), mic: $('.vvz-mic'), btnVoz: $('.vvz-btn-voz'), btnCont: $('.vvz-btn-cont'), btnTam: $('.vvz-btn-tam'),
         status: $('.vvz-status span'), caption: $('.vvz-caption'), demo: $('.vvz-demo'), toast: $('.vvz-toast'), orbCv: $('.vvz-orb'),
         mem: $('.vvz-mem'), memHechos: $('.vvz-mem-hechos'), memRes: $('.vvz-mem-res'), memActiva: $('.vvz-mem-activa'), memBorrar: $('.vvz-mem-borrar'), foco: $('.vvz-foco'),
       };
@@ -2634,7 +2632,6 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       E.modal.querySelector('.vvz-cerrar').addEventListener('click', () => this.cerrar());
       E.modal.querySelector('.vvz-nuevo').addEventListener('click', () => this.nueva());
       E.btnTam.addEventListener('click', () => this.setCompacto(!this.compacto));
-      if (E.btnChat) E.btnChat.addEventListener('click', () => this.setCompacto(false));
       this._arrastre();
       E.modal.querySelector('.vvz-btn-mem').addEventListener('click', () => this.verMemoria(true));
       E.modal.querySelector('.vvz-mem-cerrar').addEventListener('click', () => this.verMemoria(false));
