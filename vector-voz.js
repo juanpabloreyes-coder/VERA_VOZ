@@ -242,6 +242,13 @@
   .vvz.compacto .vvz-stage{cursor:grab}
   .vvz.compacto .vvz-modal.arrastrando{transition:none}
   .vvz.compacto .vvz-stage:active{cursor:grabbing}
+  /* V5_355 · tamaño mínimo de Vera (solo la esfera) y botón para alternar mínimo/medio */
+  .vvz.compacto.vvz-minimo .vvz-controls,.vvz.compacto.vvz-minimo .vvz-toast{display:none!important}
+  .vvz.compacto.vvz-minimo .vvz-stage{width:124px;height:124px}
+  .vvz.compacto.vvz-minimo .vvz-orb{width:124px;height:124px}
+  .vvz:not(.compacto) .vvz-btn-medida{display:none}
+  .vvz .vvz-btn-medida svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+  .vvz.compacto .vvz-btn-medida{width:28px;height:28px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
   @media (prefers-reduced-motion:reduce){.vvz *{animation:none!important;transition:none!important}}
   `;
 
@@ -2525,6 +2532,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
               <div class="vvz-head-actions">
                 <button class="vvz-icon-btn vvz-btn-mem" type="button" aria-label="Lo que Vera recuerda" title="Lo que Vera recuerda">${ICON.memoria}</button>
                 <button class="vvz-chip-btn vvz-nuevo" type="button" title="Nueva conversación">${ICON.nuevo}<span>Nueva conversación</span></button>
+                <button class="vvz-icon-btn vvz-btn-medida" type="button"></button>
                 <button class="vvz-icon-btn vvz-btn-tam" type="button"></button>
                 <button class="vvz-icon-btn vvz-cerrar" type="button" aria-label="Cerrar asistente">${ICON.cerrar}</button>
               </div>
@@ -2574,7 +2582,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       const $ = s => raiz.querySelector(s);
       this.el = {
         raiz, launch: $('.vvz-launch'), back: $('.vvz-backdrop'), modal: $('.vvz-modal'), log: $('.vvz-log'), form: $('.vvz-input'),
-        ta: $('.vvz-input textarea'), send: $('.vvz-send'), mic: $('.vvz-mic'), btnVoz: $('.vvz-btn-voz'), btnCont: $('.vvz-btn-cont'), btnTam: $('.vvz-btn-tam'),
+        ta: $('.vvz-input textarea'), send: $('.vvz-send'), mic: $('.vvz-mic'), btnVoz: $('.vvz-btn-voz'), btnCont: $('.vvz-btn-cont'), btnTam: $('.vvz-btn-tam'), btnMedida: $('.vvz-btn-medida'),
         status: $('.vvz-status span'), caption: $('.vvz-caption'), demo: $('.vvz-demo'), toast: $('.vvz-toast'), orbCv: $('.vvz-orb'),
         mem: $('.vvz-mem'), memHechos: $('.vvz-mem-hechos'), memRes: $('.vvz-mem-res'), memActiva: $('.vvz-mem-activa'), memBorrar: $('.vvz-mem-borrar'), foco: $('.vvz-foco'),
       };
@@ -2618,6 +2626,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       E.modal.querySelector('.vvz-cerrar').addEventListener('click', () => this.cerrar());
       E.modal.querySelector('.vvz-nuevo').addEventListener('click', () => this.nueva());
       E.btnTam.addEventListener('click', () => this.setCompacto(!this.compacto));
+      E.btnMedida.addEventListener('click', () => this.setMedida(Memoria.get('vvz-medida', 'minimo') === 'medio' ? 'minimo' : 'medio'));
       this._arrastre();
       E.modal.querySelector('.vvz-btn-mem').addEventListener('click', () => this.verMemoria(true));
       E.modal.querySelector('.vvz-mem-cerrar').addEventListener('click', () => this.verMemoria(false));
@@ -2717,9 +2726,23 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       this._renderHistorial(); this.setEstado('reposo');
       this.caption('Empecemos de nuevo. ¿En qué te ayudo?', true);
     },
+    setMedida(m) {
+      Memoria.set('vvz-medida', m === 'medio' ? 'medio' : 'minimo');
+      this._pintarMedida();
+      this.el.raiz.classList.toggle('vvz-minimo', this.compacto && Memoria.get('vvz-medida', 'minimo') !== 'medio');
+      setTimeout(() => this.orbe.resize(), 330);
+    },
+    _pintarMedida() {
+      const medio = Memoria.get('vvz-medida', 'minimo') === 'medio';
+      this.el.btnMedida.innerHTML = medio ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>' : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>';
+      this.el.btnMedida.setAttribute('aria-label', medio ? 'Cambiar a tamaño mínimo' : 'Cambiar a tamaño medio');
+      this.el.btnMedida.title = medio ? 'Tamaño mínimo (solo la esfera)' : 'Tamaño medio (esfera y botones)';
+    },
     setCompacto(b, auto) {
       this.compacto = !!b;
       this.el.raiz.classList.toggle('compacto', this.compacto);
+      this.el.raiz.classList.toggle('vvz-minimo', this.compacto && Memoria.get('vvz-medida', 'minimo') !== 'medio');
+      this._pintarMedida();
       this.el.modal.setAttribute('aria-modal', String(!this.compacto));
       this._pintarBotones();
       setTimeout(() => this.orbe.resize(), 330);
@@ -2732,12 +2755,17 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       this.posManual = !!this.posFija;
       if (this.posFija) { this.el.modal.style.left = this.posFija.l + 'px'; this.el.modal.style.top = this.posFija.t + 'px'; }
       this._colocar();
-      this._tFlot = setInterval(() => this._colocar(), 1200);
     },
     // Busca la esquina o borde de la pantalla donde la esfera tape menos texto, botones o modelos de Vector
     _colocar() {
       if (!this.compacto || !this.abierto) return;
       const m = this.el.modal;
+      if (!this.posFija) { // V5_355: sin búsqueda de espacio libre; se ancla bajo Top 5 (#gVeraSlot) o abajo a la derecha
+        const w0 = m.offsetWidth, h0 = m.offsetHeight, slot = document.getElementById('gVeraSlot');
+        if (slot) { const q = slot.getBoundingClientRect(); m.style.left = Math.max(0, q.left + (q.width - w0) / 2) + 'px'; m.style.top = Math.max(0, q.top + (q.height - h0) / 2) + 'px'; }
+        else { m.style.left = Math.max(0, innerWidth - w0 - 14) + 'px'; m.style.top = Math.max(0, innerHeight - h0 - 14) + 'px'; }
+        return;
+      }
       if (this.posManual) {
         const bw0 = m.offsetWidth, bh0 = m.offsetHeight;
         m.style.left = Math.min(Math.max(0, parseFloat(m.style.left) || 0), innerWidth - bw0) + 'px';
