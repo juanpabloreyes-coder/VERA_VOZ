@@ -2730,6 +2730,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       Memoria.set('vvz-medida', m === 'medio' ? 'medio' : 'minimo');
       this._pintarMedida();
       this.el.raiz.classList.toggle('vvz-minimo', this.compacto && Memoria.get('vvz-medida', 'minimo') !== 'medio');
+      this._colocar();
       setTimeout(() => this.orbe.resize(), 330);
     },
     _pintarMedida() {
@@ -2755,10 +2756,11 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       this.posManual = !!this.posFija;
       if (this.posFija) { this.el.modal.style.left = this.posFija.l + 'px'; this.el.modal.style.top = this.posFija.t + 'px'; }
       this._colocar();
+      this._tFlot = setInterval(() => this._colocar(), 1200);
     },
     // Busca la esquina o borde de la pantalla donde la esfera tape menos texto, botones o modelos de Vector
     _colocar() {
-      if (!this.compacto || !this.abierto) return;
+      if (!this.compacto) return;
       const m = this.el.modal;
       if (!this.posFija) { // V5_355: sin búsqueda de espacio libre; se ancla bajo Top 5 (#gVeraSlot) o abajo a la derecha
         const w0 = m.offsetWidth, h0 = m.offsetHeight, slot = document.getElementById('gVeraSlot');
@@ -2766,6 +2768,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
         else { m.style.left = Math.max(0, innerWidth - w0 - 14) + 'px'; m.style.top = Math.max(0, innerHeight - h0 - 14) + 'px'; }
         return;
       }
+      if (!this.abierto) return;
       if (this.posManual) {
         const bw0 = m.offsetWidth, bh0 = m.offsetHeight;
         m.style.left = Math.min(Math.max(0, parseFloat(m.style.left) || 0), innerWidth - bw0) + 'px';
