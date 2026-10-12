@@ -360,7 +360,7 @@ async function handleVoz(request, env, ctx) {
 
   if (ruta === '/widget.js' && request.method === 'GET') {
     return new Response(typeof WIDGET_JS === 'string' ? WIDGET_JS : '/* widget no incluido */', {
-      headers: { 'content-type': 'application/javascript; charset=utf-8', 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' },
+      headers: { 'content-type': 'application/javascript; charset=utf-8', 'cache-control': 'public, max-age=30', 'access-control-allow-origin': '*' },
     });
   }
   if (!ruta.startsWith('/api/voz')) return null;
