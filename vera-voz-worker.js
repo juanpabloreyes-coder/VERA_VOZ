@@ -489,9 +489,14 @@ NO guardes:
 - órdenes que el usuario le dio a Vera ni lo que Vera hizo o dijo; saludos, pruebas, datos pasajeros, suposiciones ni inferencias sobre su forma de trabajar;
 - datos sensibles (salud, finanzas personales, contraseñas, documentos de identidad);
 - preferencias sobre opciones configurables de Vector (presupuesto a precio alzado, tipo de cubierta, nivel de acabados, o cualquier opción de la app) y ubicaciones buscadas o marcadas en el mapa: configurar algo en la app no significa que le guste, lo prefiera ni que viva ahí; solo cuenta lo que el usuario aclare explícitamente.
+- si el usuario pidió llevar, ir, mostrar o buscar un lugar en el mapa (por ejemplo "llévame a San Luis Potosí"), no guardes nada sobre ese lugar: ni interés, ni proyecto, ni ubicación.
 Fusiona y actualiza: si un dato cambió, reemplázalo; elimina duplicados y cualquier dato de la MEMORIA ACTUAL que sea configuración del proyecto; máximo 30 datos, cada uno en una frase corta en español (máx. 140 caracteres), en tercera persona ("Se llama Juan Pablo", "Le interesa…"), en texto plano sin markdown ni asteriscos.
 Además escribe un "resumen" de 1 frase sobre de qué trató la conversación (sin cifras del proyecto).
 Responde SOLO con JSON válido, sin texto extra: {"hechos": ["..."], "resumen": "..."}`;
+
+const ESTADOS_MX = /aguascalientes|baja california|campeche|chiapas|chihuahua|coahuila|colima|durango|guanajuato|guerrero|hidalgo|jalisco|m[eé]xico|michoac[aá]n|morelos|nayarit|nuevo le[oó]n|oaxaca|puebla|quer[eé]taro|quintana roo|san luis potos[ií]|sinaloa|sonora|tabasco|tamaulipas|tlaxcala|veracruz|yucat[aá]n|zacatecas|cdmx|ciudad de m[eé]xico/i;
+const PIDE_MAPA = /\bmapa\b|ll[eé]vame|mu[eé]strame|vete a|ir a |\bubica|\bzoom\b|\bnavega/i;
+const UBICACION_MEMORIA = /ubicaci[oó]n|ciudad|municipio|colonia|\bmapa\b|\blugar\b|proyectos? en /i;
 
 async function memoria(request, env, cors) {
   if (!env.AI && !env.ANTHROPIC_API_KEY && !env.GROQ_API_KEY && !env.GEMINI_API_KEY && !env.MISTRAL_API_KEY) return json({ error: 'Sin IA' }, 500, cors);
@@ -525,7 +530,12 @@ async function memoria(request, env, cors) {
   const datos = extraerJSON(texto);
   if (!datos || !Array.isArray(datos.hechos)) return json({ error: 'Respuesta no válida', hechos: actuales }, 200, cors);
   const plano = s => String(s || '').replace(/[*_`#]+/g, '').replace(/\s+/g, ' ').trim();
-  const hechos = [...new Set(datos.hechos.map(plano).filter(h => h && h.length <= 200))].slice(0, 30);
+  let hechos = [...new Set(datos.hechos.map(plano).filter(h => h && h.length <= 200))];
+  // Si en la conversación se pidió ir o buscar un lugar en el mapa, ningún dato de ubicación se guarda
+  // (ni como interés, ni como proyecto, ni como ubicación).
+  const pidioMapa = (Array.isArray(body.mensajes) ? body.mensajes : []).some(m => m && m.role === 'user' && PIDE_MAPA.test(String(m.content || '')));
+  if (pidioMapa) hechos = hechos.filter(h => !ESTADOS_MX.test(h) && !UBICACION_MEMORIA.test(h));
+  hechos = hechos.slice(0, 30);
   return json({ hechos, resumen: plano(datos.resumen).slice(0, 300) }, 200, cors);
 }
 
