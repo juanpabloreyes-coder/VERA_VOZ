@@ -2718,6 +2718,16 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       setTimeout(() => this.orbe.stop(), 300);
       if (this.ultimoFoco && this.ultimoFoco.focus) this.ultimoFoco.focus();
       Memoria.consolidar(this.historial);
+      // V5_361 · al cerrar, suelta el modo compacto para que el ícono cerrado
+      // vuelva a seguir a #gVeraSlot (si no, _colocarLanzador() nunca se
+      // vuelve a ejecutar y el ícono queda "congelado" y deja de responder al clic)
+      if (this.compacto) {
+        this.compacto = false;
+        this.el.raiz.classList.remove('compacto');
+        clearInterval(this._tFlot);
+        this.el.modal.style.left = ''; this.el.modal.style.top = '';
+        this._colocarLanzador();
+      }
     },
     nueva() {
       this.interrumpir(); this.oido.detener(); this._quitarInterino();
