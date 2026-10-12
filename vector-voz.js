@@ -91,11 +91,11 @@
   .vvz-ctrl:hover{background:rgba(255,255,255,.12)}
   .vvz-ctrl[aria-pressed=true]{color:#fff;border-color:rgba(79,216,255,.55);background:rgba(79,216,255,.16)}
   .vvz-ctrl.off{color:#8aa3b5}
-  .vvz-mic{width:68px;height:68px;border-radius:50%;border:0;color:#0d1822;display:grid;place-items:center;
-    background:linear-gradient(135deg,#7fe6ff 0%,#5e8dff 55%,#a86bff 100%);box-shadow:0 0 0 6px rgba(94,141,255,.14),0 10px 30px rgba(60,90,255,.45);transition:transform .15s ease,box-shadow .3s}
+  .vvz-mic{width:68px;height:68px;border-radius:50%;border:0;color:#fff;display:grid;place-items:center;
+    background:linear-gradient(135deg,#8EC5FF 0%,#1D5FBF 58%,#0E8A66 100%);box-shadow:0 0 0 6px rgba(29,95,191,.14),0 10px 30px rgba(29,95,191,.42);transition:transform .15s ease,box-shadow .3s}
   .vvz-mic:hover{transform:scale(1.04)}
   .vvz-mic svg{width:26px;height:26px;stroke-width:2}
-  .vvz-mic[aria-pressed=true]{box-shadow:0 0 0 8px rgba(79,216,255,.22),0 0 40px rgba(79,216,255,.6)}
+  .vvz-mic[aria-pressed=true]{box-shadow:0 0 0 8px rgba(14,138,102,.24),0 0 40px rgba(14,138,102,.55)}
   .vvz-ctrl:focus-visible,.vvz-mic:focus-visible,.vvz-icon-btn:focus-visible,.vvz-chip-btn:focus-visible,.vvz-send:focus-visible,.vvz-sug:focus-visible{outline:3px solid rgba(79,216,255,.6);outline-offset:2px}
   .vvz-hint{position:relative;font-size:11.5px;color:rgba(220,232,240,.55);margin-bottom:14px;text-align:center;padding:0 12px}
 
@@ -299,22 +299,10 @@
       this.cv = canvas;
       this.ctx = canvas.getContext('2d');
       this.mini = !!opts.mini;
-      const n = opts.puntos || 2200;
-      this.n = n;
-      this.pts = new Float32Array(n * 4);
-      const ga = Math.PI * (3 - Math.sqrt(5));
-      for (let i = 0; i < n; i++) {
-        const y = 1 - (i / (n - 1)) * 2, r = Math.sqrt(1 - y * y), th = ga * i;
-        this.pts[i * 4] = Math.cos(th) * r; this.pts[i * 4 + 1] = y; this.pts[i * 4 + 2] = Math.sin(th) * r; this.pts[i * 4 + 3] = Math.random();
-      }
-      const nd = opts.polvo == null ? 240 : opts.polvo;
-      this.nd = nd;
-      this.polvo = new Float32Array(nd * 5);
-      for (let i = 0; i < nd; i++) {
-        const u = Math.random() * 2 - 1, a = Math.random() * Math.PI * 2, r = Math.sqrt(1 - u * u);
-        this.polvo.set([Math.cos(a) * r, u, Math.sin(a) * r, 1.05 + Math.random() * .4, Math.random()], i * 5);
-      }
-      this.buf = Array.from({ length: NB * ND }, () => ({ c: 0, xy: new Float32Array((n + nd) * 3) }));
+      // Puntos por píxel cuadrado de la esfera visible: la densidad se ve igual en todos los tamaños
+      this.densidad = opts.densidad || .4;
+      this.polvoRel = this.mini ? 0 : .05;
+      this.n = 0; this.nd = 0; this.pts = null; this.polvo = null; this.buf = [];
       this.P = Object.assign({ tilt: 0 }, MODOS.reposo);
       this.T = Object.assign({ tilt: 0 }, MODOS.reposo);
       this.modo = 'reposo';
@@ -332,6 +320,28 @@
       const w = this.cv.clientWidth || 300, h = this.cv.clientHeight || 300;
       this.cv.width = Math.round(w * dpr); this.cv.height = Math.round(h * dpr);
       this.dpr = dpr; this.w = w; this.h = h;
+      this._dimensionar();
+    }
+    _dimensionar() {
+      const W = this.w, H = this.h;
+      const bajo = !this.mini && H < 430, muyBajo = !this.mini && H < 300;
+      const R = this.mini ? Math.min(W, H) * .36 : Math.min(W * .27, H * (muyBajo ? .18 : bajo ? .2 : .27));
+      const n = Math.max(300, Math.min(11000, Math.round(this.densidad * Math.PI * R * R)));
+      if (this.pts && Math.abs(n - this.n) < this.n * .05) return;
+      const nd = Math.round(n * this.polvoRel);
+      this.n = n; this.nd = nd;
+      this.pts = new Float32Array(n * 4);
+      const ga = Math.PI * (3 - Math.sqrt(5));
+      for (let i = 0; i < n; i++) {
+        const y = 1 - (i / (n - 1)) * 2, r = Math.sqrt(1 - y * y), th = ga * i;
+        this.pts[i * 4] = Math.cos(th) * r; this.pts[i * 4 + 1] = y; this.pts[i * 4 + 2] = Math.sin(th) * r; this.pts[i * 4 + 3] = Math.random();
+      }
+      this.polvo = new Float32Array(nd * 5);
+      for (let i = 0; i < nd; i++) {
+        const u = Math.random() * 2 - 1, a = Math.random() * Math.PI * 2, r = Math.sqrt(1 - u * u);
+        this.polvo.set([Math.cos(a) * r, u, Math.sin(a) * r, 1.05 + Math.random() * .4, Math.random()], i * 5);
+      }
+      this.buf = Array.from({ length: NB * ND }, () => ({ c: 0, xy: new Float32Array((n + nd) * 3) }));
     }
     start() { if (!this.vivo) { this.vivo = true; this.ultimo = performance.now(); requestAnimationFrame(this._loop); } }
     stop() { this.vivo = false; }
@@ -2550,8 +2560,8 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
         },
       };
 
-      this.orbe = new Orbe(this.el.orbCv, { puntos: innerWidth < 700 ? 3400 : 6500, polvo: innerWidth < 700 ? 300 : 600 });
-      if (this.el.launch) { this.mini = new Orbe(this.el.launch.querySelector('canvas'), { mini: true, puntos: 520, polvo: 0 }); this.mini.start(); }
+      this.orbe = new Orbe(this.el.orbCv, {});
+      if (this.el.launch) { this.mini = new Orbe(this.el.launch.querySelector('canvas'), { mini: true }); this.mini.start(); }
 
       this.voz = new Voz({ inicioFrase: f => this._alHablarFrase(f), finTurno: () => this._alTerminarDeHablar() });
       this.oido = new OidoMixto({
