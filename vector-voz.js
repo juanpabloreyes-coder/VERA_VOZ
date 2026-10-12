@@ -44,6 +44,9 @@
     --cyan:#4fd8ff;--violet:#a04dff;
     font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;color:var(--ink);font-size:15px;line-height:1.45;letter-spacing:normal;text-align:left}
   .vvz button{font:inherit;cursor:pointer}
+  .vvz-launch-label{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:7px;display:flex;flex-direction:column;align-items:center;gap:1px;white-space:nowrap;pointer-events:none}
+  .vvz-launch-label strong{font-size:15px;font-weight:800;letter-spacing:.04em;color:#1D5FBF;text-shadow:0 1px 2px rgba(255,255,255,.9),0 0 4px #fff}
+  .vvz-launch-label span{font-size:13px;font-weight:700;color:#304756;text-shadow:0 1px 2px rgba(255,255,255,.9),0 0 4px #fff}
   .vvz-launch{position:fixed;right:20px;bottom:20px;z-index:2147482000;width:60px;height:60px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;
     background:radial-gradient(circle at 50% 45%,#1d3446,#0e1a24);box-shadow:0 0 0 3px rgba(255,255,255,.9),0 10px 28px rgba(20,41,59,.32),0 0 26px rgba(94,141,255,.35);transition:transform .2s ease,box-shadow .2s ease,opacity .2s}
   .vvz-launch:hover{transform:scale(1.06);box-shadow:0 0 0 3px #fff,0 12px 34px rgba(20,41,59,.36),0 0 34px rgba(94,141,255,.55)}
@@ -2523,6 +2526,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       const raiz = document.createElement('div'); raiz.className = 'vvz'; raiz.dataset.estado = 'reposo';
       raiz.innerHTML = `
         ${CFG.lanzador ? `<button class="vvz-launch" type="button" aria-haspopup="dialog" aria-label="Hablar con ${esc(CFG.nombre)}, asistente de costos y BIM 5D (${esc(CFG.atajo)})">
+            <div class="vvz-launch-label" aria-hidden="true"><strong>${esc(CFG.nombre).toUpperCase()}</strong><span>Asistente de Voz</span></div>
             <canvas aria-hidden="true"></canvas><span class="vvz-tip">Hablar con ${esc(CFG.nombre)} · ${esc(CFG.atajo)}</span></button>` : ''}
         <div class="vvz-foco" aria-hidden="true"><i>Vera</i></div>
         <div class="vvz-backdrop" aria-hidden="true">
