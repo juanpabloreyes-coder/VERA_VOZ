@@ -244,8 +244,7 @@
   .vvz.compacto .vvz-stage:active{cursor:grabbing}
   /* V5_355 · tamaño mínimo de Vera (solo la esfera) y botón para alternar mínimo/medio */
   .vvz.compacto.vvz-minimo .vvz-controls,.vvz.compacto.vvz-minimo .vvz-toast{display:none!important}
-  .vvz.compacto.vvz-minimo .vvz-stage{width:124px;height:124px}
-  .vvz.compacto.vvz-minimo .vvz-orb{width:124px;height:124px}
+  .vvz.compacto.vvz-minimo .vvz-stage{transform:scale(.62);transform-origin:50% 50%}
   .vvz:not(.compacto) .vvz-btn-medida{display:none}
   .vvz .vvz-btn-medida svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
   .vvz.compacto .vvz-btn-medida{width:28px;height:28px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
