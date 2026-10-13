@@ -2795,17 +2795,18 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
     // V5_367 · hasta dónde puede bajar el recuadro de cristal: el borde inferior de la ventana,
     // salvo que debajo del hueco haya contenido visible (p. ej. la nota de "Fuente:"), que no se tapa
     _fondoPanel(slot, q) {
-      let limite = innerHeight - 8;
+      let tope = null; // borde superior de lo que venga debajo del hueco, si es que hay algo
       let el = slot;
       while (el && el !== document.body && el.parentElement) {
         for (let s = el.nextElementSibling; s; s = s.nextElementSibling) {
           if (s.closest && s.closest('#vector-voz')) continue;
           const r = s.getBoundingClientRect();
-          if (r.height > 2 && r.top >= q.top - 1) limite = Math.min(limite, r.top - 6);
+          if (r.height > 2 && r.top >= q.top - 1) tope = tope == null ? r.top : Math.min(tope, r.top);
         }
         el = el.parentElement;
       }
-      return Math.max(q.bottom, limite);
+      const libre = Math.max(q.bottom, innerHeight - 2);
+      return tope == null ? libre : Math.min(libre, tope - 6);
     },
     _colocar() {
       if (!this.compacto) return;
