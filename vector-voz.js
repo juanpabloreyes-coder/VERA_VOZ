@@ -218,7 +218,13 @@
   }
   /* --- modo flotante (compacto): solo la esfera y los botones, sin fondo; se acomoda en una zona libre --- */
   .vvz.compacto .vvz-backdrop{padding:0;display:block;background:transparent;pointer-events:none}
-  .vvz.compacto .vvz-modal{position:fixed;left:auto;top:auto;right:auto;bottom:auto;width:auto;height:auto;background:transparent;border:0;box-shadow:none;border-radius:0;overflow:visible;pointer-events:none;transition:left .6s cubic-bezier(.2,.8,.2,1),top .6s cubic-bezier(.2,.8,.2,1)}
+  /* V5_365 · recuadro "liquid glass" gris claro detrás de la esfera, para que resalten las partículas blancas */
+  .vvz.compacto .vvz-modal{position:fixed;left:auto;top:auto;right:auto;bottom:auto;width:auto;height:auto;
+    background:linear-gradient(150deg,rgba(234,238,243,.74) 0%,rgba(213,221,231,.66) 55%,rgba(226,232,240,.72) 100%);
+    backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);
+    border:1px solid rgba(255,255,255,.58);border-radius:20px;
+    box-shadow:0 10px 30px rgba(20,41,59,.14),0 1px 2px rgba(20,41,59,.06),inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 0 rgba(20,41,59,.06);
+    overflow:visible;pointer-events:none;transition:left .6s cubic-bezier(.2,.8,.2,1),top .6s cubic-bezier(.2,.8,.2,1)}
   .vvz.compacto .vvz-head{position:static;top:auto;right:auto;padding:0;border:0;background:transparent;gap:0;z-index:3;pointer-events:none}
   .vvz.compacto .vvz-head>div:first-child{display:none}
   .vvz.compacto .vvz-head-actions{position:static;gap:0;pointer-events:none}
@@ -2767,10 +2773,17 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
     },
     // Busca la esquina o borde de la pantalla donde la esfera tape menos texto, botones o modelos de Vector
     // V5_360 · el icono cerrado de Vera (antes de abrir) se centra bajo Top 5 partidas (#gVeraSlot)
+    // V5_365 · el hueco de Vera puede existir en varias vistas (guiada y Experiencia GCPeasa);
+    // se usa el primero que esté realmente visible
+    _slot() {
+      const cand = document.querySelectorAll('[data-vera-slot],#gVeraSlot');
+      for (const el of cand) { const r = el.getBoundingClientRect(); if (r.width >= 10 && r.height >= 10) return el; }
+      return null;
+    },
     _colocarLanzador() {
       const btn = this.el.launch;
       if (!btn || this.compacto || this.abierto) return;
-      const slot = document.getElementById('gVeraSlot');
+      const slot = this._slot();
       if (!slot) { btn.style.left = ''; btn.style.top = ''; btn.style.right = ''; btn.style.bottom = ''; return; }
       const q = slot.getBoundingClientRect();
       if (q.width < 10 || q.height < 10) return;
@@ -2783,7 +2796,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       if (!this.compacto) return;
       const m = this.el.modal;
       if (!this.posFija) { // V5_355: sin búsqueda de espacio libre; se ancla bajo Top 5 (#gVeraSlot) o abajo a la derecha
-        const w0 = m.offsetWidth, h0 = m.offsetHeight, slot = document.getElementById('gVeraSlot');
+        const w0 = m.offsetWidth, h0 = m.offsetHeight, slot = this._slot();
         if (slot) { const q = slot.getBoundingClientRect(); m.style.left = Math.max(0, q.left + (q.width - w0) / 2) + 'px'; m.style.top = Math.max(0, q.top + (q.height - h0) / 2) + 'px'; }
         else { m.style.left = Math.max(0, innerWidth - w0 - 14) + 'px'; m.style.top = Math.max(0, innerHeight - h0 - 14) + 'px'; }
         return;
