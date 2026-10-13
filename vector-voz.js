@@ -222,20 +222,20 @@
   .vvz.compacto .vvz-head{position:static;top:auto;right:auto;padding:0;border:0;background:transparent;gap:0;z-index:3;pointer-events:none}
   .vvz.compacto .vvz-head>div:first-child{display:none}
   .vvz.compacto .vvz-head-actions{position:static;gap:0;pointer-events:none}
-  .vvz.compacto .vvz-head .vvz-icon-btn{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;width:28px;height:28px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
-  .vvz.compacto .vvz-btn-tam{left:86%;top:18%}
-  .vvz.compacto .vvz-cerrar{left:88%;top:50%}
+  .vvz.compacto .vvz-head .vvz-icon-btn{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;width:26px;height:26px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
+  .vvz.compacto .vvz-cerrar{left:91%;top:18%}
+  .vvz.compacto .vvz-btn-tam{left:91%;top:50%}
   .vvz.compacto .vvz-body{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;background:transparent;pointer-events:none;grid-template-columns:none;grid-template-rows:none}
-  .vvz.compacto .vvz-stage{margin:0;width:170px;height:170px;flex:none;background:transparent;border-radius:0;box-shadow:none;overflow:visible;pointer-events:auto;isolation:auto}
+  .vvz.compacto .vvz-stage{margin:0;width:224px;height:164px;flex:none;background:transparent;border-radius:0;box-shadow:none;overflow:visible;pointer-events:auto;isolation:auto}
   .vvz.compacto .vvz-stage::before,.vvz.compacto .vvz-stage::after{display:none}
-  .vvz.compacto .vvz-orb{position:absolute;inset:0;width:170px;height:170px;pointer-events:auto}
+  .vvz.compacto .vvz-orb{position:absolute;inset:0;width:224px;height:164px;pointer-events:auto}
   .vvz.compacto .vvz-status,.vvz.compacto .vvz-caption,.vvz.compacto .vvz-demo,.vvz.compacto .vvz-hint,.vvz.compacto .vvz-chat{display:none!important}
   /* V5_363 · los 5 botones (loop/voz/mic a la izquierda, expandir/cerrar a la derecha) se reparten alrededor de la esfera, ya centrada */
   .vvz.compacto .vvz-controls{position:absolute;inset:0;margin:0;gap:0;pointer-events:none}
   .vvz.compacto .vvz-controls>*{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;margin:0}
-  .vvz.compacto .vvz-btn-cont{left:14%;top:14%}
-  .vvz.compacto .vvz-btn-voz{left:12%;top:50%}
-  .vvz.compacto .vvz-mic{left:20%;top:82%}
+  .vvz.compacto .vvz-btn-cont{left:11.5%;top:18%}
+  .vvz.compacto .vvz-btn-voz{left:11.5%;top:50%}
+  .vvz.compacto .vvz-mic{left:11.5%;top:82%}
   .vvz.compacto .vvz-mic{width:54px;height:54px}
   .vvz.compacto .vvz-mic svg{width:21px;height:21px}
   .vvz.compacto .vvz-ctrl{width:34px;height:34px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
@@ -244,10 +244,10 @@
   .vvz.compacto .vvz-toast{top:-46px;bottom:auto;width:max-content;max-width:250px;font-size:12px;line-height:1.35;padding:7px 12px;border-radius:12px;white-space:normal;text-align:left;color:#0F2338;background:#fff}
   .vvz.compacto .vvz-head .vvz-icon-btn{background:transparent;border:0;box-shadow:none;color:#1D5FBF;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 1px 2px rgba(0,0,0,.25))}
   .vvz.compacto .vvz-head .vvz-icon-btn:hover{background:transparent;color:#0E8A66}
-  .vvz.compacto .vvz-ctrl{width:40px;height:40px;background:transparent;border:0;box-shadow:none;color:#1D5FBF;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+  .vvz.compacto .vvz-ctrl{width:36px;height:36px;background:transparent;border:0;box-shadow:none;color:#1D5FBF;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 1px 2px rgba(0,0,0,.25))}
   .vvz.compacto .vvz-ctrl[aria-pressed=true]{background:transparent;border:0;color:#0E8A66}
   .vvz.compacto .vvz-ctrl svg{width:20px;height:20px}
-  .vvz.compacto .vvz-mic{width:58px;height:58px;background:transparent;box-shadow:none;color:#0E8A66;filter:drop-shadow(0 0 3px #fff) drop-shadow(0 1px 3px rgba(0,0,0,.3))}
+  .vvz.compacto .vvz-mic{width:44px;height:44px;background:transparent;box-shadow:none;color:#0E8A66;filter:drop-shadow(0 0 3px #fff) drop-shadow(0 1px 3px rgba(0,0,0,.3))}
   .vvz.compacto .vvz-mic[aria-pressed=true]{background:transparent;box-shadow:none;color:#1D5FBF}
   .vvz.compacto .vvz-mic svg{width:26px;height:26px}
   .vvz.compacto .vvz-stage{cursor:grab}
@@ -349,6 +349,7 @@
       this.modo = 'reposo';
       this.entrada = { nivel: 0, bajos: 0, medios: 0, altos: 0 };
       this.imp = { tilt: 0, spike: 0, burst: 0, ola: 0 };
+      this.compacta = false; // V5_364 · en modo medio la esfera usa su propio tamaño/centro
       this.t = Math.random() * 100; this.rot = 0; this.ultimo = 0; this.vivo = false;
       this.velGlobal = REDUCIR_MOV ? .45 : 1;
       this._loop = this._loop.bind(this);
@@ -366,7 +367,7 @@
     _dimensionar() {
       const W = this.w, H = this.h;
       const bajo = !this.mini && H < 430, muyBajo = !this.mini && H < 300;
-      const R = this.mini ? Math.min(W, H) * .36 : Math.min(W * .27, H * (muyBajo ? .18 : bajo ? .3 : .27));
+      const R = this.mini ? Math.min(W, H) * .36 : this.compacta ? Math.min(W * .3, H * .34) : Math.min(W * .27, H * (muyBajo ? .18 : bajo ? .2 : .27));
       const n = Math.max(300, Math.min(11000, Math.round(this.densidad * Math.PI * R * R)));
       if (this.pts && Math.abs(n - this.n) < this.n * .05) return;
       const nd = Math.round(n * this.polvoRel);
@@ -429,8 +430,8 @@
       ctx.clearRect(0, 0, W, H);
 
       const bajo = !this.mini && H < 430, muyBajo = !this.mini && H < 300;
-      const cx = W / 2, cy = this.mini ? H / 2 : H * (muyBajo ? .4 : bajo ? .5 : .44);
-      const R = (this.mini ? Math.min(W, H) * .36 : Math.min(W * .27, H * (muyBajo ? .18 : bajo ? .3 : .27))) * (1 + P.swell);
+      const cx = W / 2, cy = this.mini ? H / 2 : this.compacta ? H * .44 : H * (muyBajo ? .4 : bajo ? .38 : .44);
+      const R = (this.mini ? Math.min(W, H) * .36 : this.compacta ? Math.min(W * .3, H * .34) : Math.min(W * .27, H * (muyBajo ? .18 : bajo ? .2 : .27))) * (1 + P.swell);
       // Resplandor interior
       const gr = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.6);
       gr.addColorStop(0, `rgba(70,110,255,${.28 * P.glow})`);
@@ -2732,6 +2733,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       // vuelve a ejecutar y el ícono queda "congelado" y deja de responder al clic)
       if (this.compacto) {
         this.compacto = false;
+        this.orbe.compacta = false;
         this.el.raiz.classList.remove('compacto');
         clearInterval(this._tFlot);
         this.el.modal.style.left = ''; this.el.modal.style.top = '';
@@ -2747,6 +2749,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
     },
     setCompacto(b, auto) {
       this.compacto = !!b;
+      this.orbe.compacta = this.compacto;
       this.el.raiz.classList.toggle('compacto', this.compacto);
       this.el.modal.setAttribute('aria-modal', String(!this.compacto));
       this._pintarBotones();
