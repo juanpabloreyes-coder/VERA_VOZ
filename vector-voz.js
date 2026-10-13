@@ -223,19 +223,19 @@
   .vvz.compacto .vvz-head>div:first-child{display:none}
   .vvz.compacto .vvz-head-actions{position:static;gap:0;pointer-events:none}
   .vvz.compacto .vvz-head .vvz-icon-btn{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;width:28px;height:28px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
-  .vvz.compacto .vvz-btn-tam{left:88%;top:24%}
-  .vvz.compacto .vvz-cerrar{left:90%;top:50%}
+  .vvz.compacto .vvz-btn-tam{left:86%;top:18%}
+  .vvz.compacto .vvz-cerrar{left:88%;top:50%}
   .vvz.compacto .vvz-body{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;background:transparent;pointer-events:none;grid-template-columns:none;grid-template-rows:none}
-  .vvz.compacto .vvz-stage{margin:0;width:300px;height:300px;flex:none;background:transparent;border-radius:0;box-shadow:none;overflow:visible;pointer-events:auto;isolation:auto}
+  .vvz.compacto .vvz-stage{margin:0;width:170px;height:170px;flex:none;background:transparent;border-radius:0;box-shadow:none;overflow:visible;pointer-events:auto;isolation:auto}
   .vvz.compacto .vvz-stage::before,.vvz.compacto .vvz-stage::after{display:none}
-  .vvz.compacto .vvz-orb{position:absolute;inset:0;width:300px;height:300px;pointer-events:auto}
+  .vvz.compacto .vvz-orb{position:absolute;inset:0;width:170px;height:170px;pointer-events:auto}
   .vvz.compacto .vvz-status,.vvz.compacto .vvz-caption,.vvz.compacto .vvz-demo,.vvz.compacto .vvz-hint,.vvz.compacto .vvz-chat{display:none!important}
   /* V5_363 · los 5 botones (loop/voz/mic a la izquierda, expandir/cerrar a la derecha) se reparten alrededor de la esfera, ya centrada */
   .vvz.compacto .vvz-controls{position:absolute;inset:0;margin:0;gap:0;pointer-events:none}
   .vvz.compacto .vvz-controls>*{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;margin:0}
-  .vvz.compacto .vvz-btn-cont{left:12%;top:28%}
-  .vvz.compacto .vvz-btn-voz{left:8%;top:52%}
-  .vvz.compacto .vvz-mic{left:8%;top:74%}
+  .vvz.compacto .vvz-btn-cont{left:14%;top:14%}
+  .vvz.compacto .vvz-btn-voz{left:12%;top:50%}
+  .vvz.compacto .vvz-mic{left:20%;top:82%}
   .vvz.compacto .vvz-mic{width:54px;height:54px}
   .vvz.compacto .vvz-mic svg{width:21px;height:21px}
   .vvz.compacto .vvz-ctrl{width:34px;height:34px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
