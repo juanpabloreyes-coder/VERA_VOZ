@@ -259,12 +259,12 @@
   @media (max-width:700px){.vvz.compacto .vvz-backdrop{padding:0}.vvz.compacto .vvz-modal{width:auto;height:auto;border-radius:0}}
   /* --- flotante: botones sin fondo, con color del tema y halo blanco; aviso legible; conjunto arrastrable --- */
   .vvz.compacto .vvz-toast{top:-46px;bottom:auto;width:max-content;max-width:250px;font-size:12px;line-height:1.35;padding:7px 12px;border-radius:12px;white-space:normal;text-align:left;color:#0F2338;background:#fff}
-  .vvz.compacto .vvz-head .vvz-icon-btn{background:transparent;border:0;box-shadow:none;color:#1D5FBF;filter:drop-shadow(0 0 6px #fff) drop-shadow(0 0 3px #fff) drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+  .vvz.compacto .vvz-head .vvz-icon-btn{background:transparent;border:0;box-shadow:none;color:#1D5FBF;filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 6px #fff) drop-shadow(0 0 3px #fff) drop-shadow(0 1px 2px rgba(0,0,0,.25))}
   .vvz.compacto .vvz-head .vvz-icon-btn:hover{background:transparent;color:#0E8A66}
-  .vvz.compacto .vvz-ctrl{width:36px;height:36px;background:transparent;border:0;box-shadow:none;color:#1D5FBF;filter:drop-shadow(0 0 6px #fff) drop-shadow(0 0 3px #fff) drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+  .vvz.compacto .vvz-ctrl{width:36px;height:36px;background:transparent;border:0;box-shadow:none;color:#1D5FBF;filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 6px #fff) drop-shadow(0 0 3px #fff) drop-shadow(0 1px 2px rgba(0,0,0,.25))}
   .vvz.compacto .vvz-ctrl[aria-pressed=true]{background:transparent;border:0;color:#0E8A66}
   .vvz.compacto .vvz-ctrl svg{width:20px;height:20px}
-  .vvz.compacto .vvz-mic{width:44px;height:44px;background:transparent;box-shadow:none;color:#0E8A66;filter:drop-shadow(0 0 7px #fff) drop-shadow(0 0 4px #fff) drop-shadow(0 1px 3px rgba(0,0,0,.3));transition:box-shadow .3s}
+  .vvz.compacto .vvz-mic{width:44px;height:44px;background:transparent;box-shadow:none;color:#0E8A66;filter:drop-shadow(0 0 11px #fff) drop-shadow(0 0 7px #fff) drop-shadow(0 0 4px #fff) drop-shadow(0 1px 3px rgba(0,0,0,.3));transition:box-shadow .3s}
   .vvz.compacto .vvz-mic[aria-pressed=true]{background:transparent;box-shadow:none;color:#1D5FBF}
   .vvz.compacto .vvz-mic svg{width:26px;height:26px}
   .vvz.compacto .vvz-stage{cursor:grab}
