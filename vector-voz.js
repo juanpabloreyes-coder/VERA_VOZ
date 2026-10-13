@@ -2829,17 +2829,19 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
         const w0 = m.offsetWidth, h0 = m.offsetHeight, slot = this._slot();
         if (slot) {
           const q = slot.getBoundingClientRect();
-          // V5_368 · el panel (esfera+botones+texto) nunca debe quedar oculto bajo el borde de la ventana
-          const reservaTexto = 76; // gap + alto máximo del recuadro de texto, que vive fuera de h0
           const margen = 8;
+          // V5_369 · la esfera no sube por encima del slot (no debe invadir lo que hay arriba, p.ej. Top 5 partidas);
+          // solo se recorta hacia abajo si no cupiera completa en la ventana
           let top = Math.max(0, q.top + (q.height - h0) / 2);
-          top = Math.min(top, Math.max(margen, innerHeight - h0 - reservaTexto - margen));
+          top = Math.max(q.top, Math.min(top, innerHeight - h0 - margen));
           m.style.left = Math.max(0, q.left + (q.width - w0) / 2) + 'px';
           m.style.top = top + 'px';
           // V5_366 · el recuadro de cristal se estira hacia abajo hasta donde haya espacio libre;
           // la esfera y los botones no se mueven porque el lienzo queda arriba del panel
           const fondo = this._fondoPanel(slot, q);
           if (fondo - top > h0) m.style.height = Math.round(fondo - top) + 'px';
+          // V5_369 · el recuadro de texto (vive fuera de h0) se achica si no hay sitio debajo, en vez de empujar el panel
+          if (this.el.caption) this.el.caption.style.maxHeight = Math.max(20, Math.min(64, innerHeight - (top + h0) - 6)) + 'px';
         }
         else { m.style.left = Math.max(0, innerWidth - w0 - 14) + 'px'; m.style.top = Math.max(0, innerHeight - h0 - 14) + 'px'; }
         return;
