@@ -2748,13 +2748,17 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       // V5_361 · al cerrar, suelta el modo compacto para que el ícono cerrado
       // vuelva a seguir a #gVeraSlot (si no, _colocarLanzador() nunca se
       // vuelve a ejecutar y el ícono queda "congelado" y deja de responder al clic)
+      // V5_369 · se espera a que termine el fundido del fondo (opacity .25s) antes de
+      // soltar "compacto": si no, se ve un "flash" de la ventana completa mientras se desvanece
       if (this.compacto) {
-        this.compacto = false;
-        this.orbe.compacta = false;
-        this.el.raiz.classList.remove('compacto');
-        clearInterval(this._tFlot);
-        this.el.modal.style.left = ''; this.el.modal.style.top = ''; this.el.modal.style.height = '';
-        this._colocarLanzador();
+        setTimeout(() => {
+          this.compacto = false;
+          this.orbe.compacta = false;
+          this.el.raiz.classList.remove('compacto');
+          clearInterval(this._tFlot);
+          this.el.modal.style.left = ''; this.el.modal.style.top = ''; this.el.modal.style.height = '';
+          this._colocarLanzador();
+        }, 260);
       }
     },
     nueva() {
