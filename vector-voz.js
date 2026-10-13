@@ -218,12 +218,10 @@
   }
   /* --- modo flotante (compacto): solo la esfera y los botones, sin fondo; se acomoda en una zona libre --- */
   .vvz.compacto .vvz-backdrop{padding:0;display:block;background:transparent;pointer-events:none}
-  /* V5_365 · recuadro "liquid glass" gris claro detrás de la esfera, para que resalten las partículas blancas */
+  /* V5_367 · sin fondo detrás de la esfera y los botones; solo el recuadro del texto (.vvz-caption) conserva su fondo */
   .vvz.compacto .vvz-modal{position:fixed;left:auto;top:auto;right:auto;bottom:auto;width:auto;height:auto;
-    background:linear-gradient(150deg,rgba(205,213,222,.82) 0%,rgba(180,191,205,.75) 55%,rgba(198,207,219,.8) 100%);
-    backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);
-    border:1px solid rgba(255,255,255,.58);border-radius:20px;
-    box-shadow:0 10px 30px rgba(20,41,59,.14),0 1px 2px rgba(20,41,59,.06),inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 0 rgba(20,41,59,.06);
+    background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;
+    border:0;border-radius:20px;box-shadow:none;
     overflow:visible;pointer-events:none;transition:left .6s cubic-bezier(.2,.8,.2,1),top .6s cubic-bezier(.2,.8,.2,1)}
   .vvz.compacto .vvz-head{position:static;top:auto;right:auto;padding:0;border:0;background:transparent;gap:0;z-index:3;pointer-events:none}
   .vvz.compacto .vvz-head>div:first-child{display:none}
