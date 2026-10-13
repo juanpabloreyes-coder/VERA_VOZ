@@ -2830,10 +2830,8 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
           const top = Math.max(0, q.top + (q.height - h0) / 2);
           m.style.left = Math.max(0, q.left + (q.width - w0) / 2) + 'px';
           m.style.top = top + 'px';
-          // V5_366 · el recuadro de cristal se estira hacia abajo hasta donde haya espacio libre;
-          // la esfera y los botones no se mueven porque el lienzo queda arriba del panel
-          const fondo = this._fondoPanel(slot, q);
-          if (fondo - top > h0) m.style.height = Math.round(fondo - top) + 'px';
+          // V5_368 · ya no se estira el alto del recuadro: sin fondo visible no hace falta,
+          // y mantenerlo alto limitaba cuánto se podía arrastrar hacia abajo
         }
         else { m.style.left = Math.max(0, innerWidth - w0 - 14) + 'px'; m.style.top = Math.max(0, innerHeight - h0 - 14) + 'px'; }
         return;
