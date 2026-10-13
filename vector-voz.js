@@ -220,7 +220,7 @@
   .vvz.compacto .vvz-backdrop{padding:0;display:block;background:transparent;pointer-events:none}
   /* V5_365 · recuadro "liquid glass" gris claro detrás de la esfera, para que resalten las partículas blancas */
   .vvz.compacto .vvz-modal{position:fixed;left:auto;top:auto;right:auto;bottom:auto;width:auto;height:auto;
-    background:linear-gradient(150deg,rgba(234,238,243,.74) 0%,rgba(213,221,231,.66) 55%,rgba(226,232,240,.72) 100%);
+    background:linear-gradient(150deg,rgba(205,213,222,.82) 0%,rgba(180,191,205,.75) 55%,rgba(198,207,219,.8) 100%);
     backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);
     border:1px solid rgba(255,255,255,.58);border-radius:20px;
     box-shadow:0 10px 30px rgba(20,41,59,.14),0 1px 2px rgba(20,41,59,.06),inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 0 rgba(20,41,59,.06);
@@ -246,7 +246,7 @@
   .vvz.compacto .vvz-caption{display:-webkit-box;position:absolute;left:0;top:calc(100% + 6px);width:224px;margin:0;
     padding:7px 10px;min-height:44px;max-height:64px;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
     box-sizing:border-box;text-align:center;font-size:12px;line-height:1.3;color:#15324a;text-shadow:none;
-    background:rgba(205,213,222,.72);border:1px solid rgba(255,255,255,.5);border-radius:12px;
+    background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.75);border-radius:12px;
     backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(20,41,59,.1)}
   .vvz.compacto .vvz-caption.tenue{color:rgba(21,50,74,.62);font-style:italic}
   /* V5_363 · los 5 botones (loop/voz/mic a la izquierda, expandir/cerrar a la derecha) se reparten alrededor de la esfera, ya centrada */
