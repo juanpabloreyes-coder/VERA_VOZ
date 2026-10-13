@@ -247,7 +247,7 @@
   .vvz.compacto .vvz-ctrl{width:36px;height:36px;background:transparent;border:0;box-shadow:none;color:#1D5FBF;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 1px 2px rgba(0,0,0,.25))}
   .vvz.compacto .vvz-ctrl[aria-pressed=true]{background:transparent;border:0;color:#0E8A66}
   .vvz.compacto .vvz-ctrl svg{width:20px;height:20px}
-  .vvz.compacto .vvz-mic{width:44px;height:44px;background:transparent;box-shadow:none;color:#0E8A66;filter:drop-shadow(0 0 3px #fff) drop-shadow(0 1px 3px rgba(0,0,0,.3))}
+  .vvz.compacto .vvz-mic{width:44px;height:44px;background:transparent;box-shadow:none;color:#0E8A66;filter:drop-shadow(0 0 3px #fff) drop-shadow(0 1px 3px rgba(0,0,0,.3));transition:box-shadow .3s}
   .vvz.compacto .vvz-mic[aria-pressed=true]{background:transparent;box-shadow:none;color:#1D5FBF}
   .vvz.compacto .vvz-mic svg{width:26px;height:26px}
   .vvz.compacto .vvz-stage{cursor:grab}
