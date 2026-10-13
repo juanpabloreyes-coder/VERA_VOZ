@@ -462,7 +462,10 @@ async function chat(request, env, cors) {
     const detalle = await upstream.text().catch(() => '');
     return json({ error: 'El modelo no respondió', estado: upstream.status, detalle: detalle.slice(0, 500) }, 502, cors);
   }
-  return new Response(upstream.body.pipeThrough(new TextDecoderStream()).pipeThrough(sseATexto()).pipeThrough(new TextEncoderStream()), { headers: cabeceras });
+  // V-USO · registra tokens de entrada/salida de cada solicitud a Claude en los logs del Worker (Observability de Cloudflare),
+  // para poder calcular el gasto real por sesión sin necesidad de agregar almacenamiento nuevo.
+  const registrarUso = uso => { try { console.log(JSON.stringify({ evento: 'vera_uso_claude', modelo: uso.modelo || env.CLAUDE_MODEL || MODELO_CLAUDE, entrada: uso.entrada, salida: uso.salida, ts: new Date().toISOString() })); } catch (_) {} };
+  return new Response(upstream.body.pipeThrough(new TextDecoderStream()).pipeThrough(sseATexto(registrarUso)).pipeThrough(new TextEncoderStream()), { headers: cabeceras });
 }
 
 function mensajeErrorIA(err) {
@@ -559,8 +562,11 @@ function bloqueMemoria(m) {
 }
 
 /* ---------------------------- utilidades ----------------------------- */
-function sseATexto() {
+function sseATexto(onUso) {
   let buffer = '';
+  // V-USO · si se pasa onUso(uso), acumula tokens de entrada/salida de los eventos de Claude (message_start / message_delta)
+  // para poder registrar el consumo real por solicitud, sin tocar el texto que recibe el cliente.
+  const uso = { entrada: 0, salida: 0, modelo: '' };
   const procesar = (bloque, controller) => {
     for (const linea of bloque.split('\n')) {
       if (!linea.startsWith('data:')) continue;
@@ -569,6 +575,8 @@ function sseATexto() {
       let ev; try { ev = JSON.parse(dato); } catch (_) { continue; }
       if (ev && ev.error) throw new Error('error en stream: ' + String(ev.error.message || ev.error).slice(0, 120));
       try {
+        if (ev.type === 'message_start' && ev.message && ev.message.usage) { uso.entrada = ev.message.usage.input_tokens || 0; uso.modelo = ev.message.model || uso.modelo; }
+        else if (ev.type === 'message_delta' && ev.usage) uso.salida = ev.usage.output_tokens || uso.salida;
         if (ev.type === 'content_block_delta' && ev.delta && ev.delta.type === 'text_delta') controller.enqueue(ev.delta.text);
         else if (typeof ev.response === 'string' && ev.response) controller.enqueue(ev.response);
         else if (ev.choices && ev.choices[0] && ev.choices[0].delta && contenidoTexto(ev.choices[0].delta.content)) controller.enqueue(contenidoTexto(ev.choices[0].delta.content));
@@ -582,7 +590,7 @@ function sseATexto() {
       let i;
       while ((i = buffer.indexOf('\n\n')) >= 0) { procesar(buffer.slice(0, i), controller); buffer = buffer.slice(i + 2); }
     },
-    flush(controller) { if (buffer.trim()) procesar(buffer, controller); },
+    flush(controller) { if (buffer.trim()) procesar(buffer, controller); if (onUso && (uso.entrada || uso.salida)) onUso(uso); },
   });
 }
 
