@@ -241,7 +241,7 @@
     backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(20,41,59,.22)}
   .vvz.compacto .vvz-status i{width:6px;height:6px}
   .vvz.compacto[data-estado=escuchando] .vvz-status,.vvz.compacto[data-estado=pensando] .vvz-status{display:inline-flex}
-  .vvz.compacto .vvz-caption{display:-webkit-box;position:absolute;left:0;top:calc(100% + 6px);width:224px;margin:0;
+  .vvz.compacto .vvz-caption{display:-webkit-box;position:absolute;left:0;top:calc(100% - 14px);width:224px;margin:0;
     padding:7px 10px;min-height:44px;max-height:64px;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
     box-sizing:border-box;text-align:center;font-size:12px;line-height:1.3;color:#15324a;text-shadow:none;
     background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.75);border-radius:12px;
