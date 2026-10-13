@@ -229,22 +229,22 @@
   .vvz.compacto .vvz-head>div:first-child{display:none}
   .vvz.compacto .vvz-head-actions{position:static;gap:0;pointer-events:none}
   .vvz.compacto .vvz-head .vvz-icon-btn{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;width:26px;height:26px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
-  .vvz.compacto .vvz-cerrar{left:91%;top:18%}
-  .vvz.compacto .vvz-btn-tam{left:91%;top:50%}
+  .vvz.compacto .vvz-cerrar{left:91%;top:32%}
+  .vvz.compacto .vvz-btn-tam{left:91%;top:48%}
   .vvz.compacto .vvz-body{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;background:transparent;pointer-events:none;grid-template-columns:none;grid-template-rows:none}
   .vvz.compacto .vvz-stage{margin:0;width:224px;height:164px;flex:none;background:transparent;border-radius:0;box-shadow:none;overflow:visible;pointer-events:auto;isolation:auto}
   .vvz.compacto .vvz-stage::before,.vvz.compacto .vvz-stage::after{display:none}
   .vvz.compacto .vvz-orb{position:absolute;inset:0;width:224px;height:164px;pointer-events:auto}
   .vvz.compacto .vvz-demo,.vvz.compacto .vvz-hint,.vvz.compacto .vvz-chat{display:none!important}
   /* V5_366 · indicador de estado (pensando/escuchando) y transcripción por turnos, dentro del recuadro compacto */
-  .vvz.compacto .vvz-status{display:none;position:absolute;left:auto;right:6px;top:auto;bottom:8px;margin:0;z-index:2;
-    padding:3px 9px 3px 7px;gap:5px;font-size:10px;font-weight:700;letter-spacing:.01em;color:#fff;
+  .vvz.compacto .vvz-status{display:none;position:absolute;left:50%;right:auto;top:50%;bottom:auto;margin:0;z-index:2;
+    transform:translate(-50%,-50%);padding:3px 9px 3px 7px;gap:5px;font-size:10px;font-weight:700;letter-spacing:.01em;color:#fff;
     background:rgba(20,41,59,.8);border:1px solid rgba(255,255,255,.22);border-radius:999px;
     backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(20,41,59,.22)}
   .vvz.compacto .vvz-status i{width:6px;height:6px}
   .vvz.compacto[data-estado=escuchando] .vvz-status,.vvz.compacto[data-estado=pensando] .vvz-status{display:inline-flex}
   .vvz.compacto .vvz-caption{display:-webkit-box;position:absolute;left:0;top:calc(100% + 6px);width:224px;margin:0;
-    padding:7px 10px;min-height:30px;max-height:46px;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    padding:7px 10px;min-height:44px;max-height:64px;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
     box-sizing:border-box;text-align:center;font-size:12px;line-height:1.3;color:#15324a;text-shadow:none;
     background:rgba(255,255,255,.58);border:1px solid rgba(255,255,255,.65);border-radius:12px;
     backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(20,41,59,.1)}
