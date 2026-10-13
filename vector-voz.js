@@ -250,9 +250,9 @@
   /* V5_363 · los 5 botones (loop/voz/mic a la izquierda, expandir/cerrar a la derecha) se reparten alrededor de la esfera, ya centrada */
   .vvz.compacto .vvz-controls{position:absolute;inset:0;margin:0;gap:0;pointer-events:none}
   .vvz.compacto .vvz-controls>*{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;margin:0}
-  .vvz.compacto .vvz-btn-cont{left:11.5%;top:18%}
+  .vvz.compacto .vvz-btn-cont{left:11.5%;top:30%}
   .vvz.compacto .vvz-btn-voz{left:11.5%;top:50%}
-  .vvz.compacto .vvz-mic{left:11.5%;top:82%}
+  .vvz.compacto .vvz-mic{left:11.5%;top:70%}
   .vvz.compacto .vvz-mic{width:54px;height:54px}
   .vvz.compacto .vvz-mic svg{width:21px;height:21px}
   .vvz.compacto .vvz-ctrl{width:34px;height:34px;background:rgba(255,255,255,.92);box-shadow:0 2px 8px rgba(20,41,59,.18)}
