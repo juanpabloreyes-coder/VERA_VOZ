@@ -2742,7 +2742,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
         this.orbe.compacta = false;
         this.el.raiz.classList.remove('compacto');
         clearInterval(this._tFlot);
-        this.el.modal.style.left = ''; this.el.modal.style.top = '';
+        this.el.modal.style.left = ''; this.el.modal.style.top = ''; this.el.modal.style.height = '';
         this._colocarLanzador();
       }
     },
@@ -2765,7 +2765,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
     },
     _flotante() {
       clearInterval(this._tFlot);
-      if (!this.compacto) { this.el.modal.style.left = ''; this.el.modal.style.top = ''; return; }
+      if (!this.compacto) { this.el.modal.style.left = ''; this.el.modal.style.top = ''; this.el.modal.style.height = ''; return; }
       this.posManual = !!this.posFija;
       if (this.posFija) { this.el.modal.style.left = this.posFija.l + 'px'; this.el.modal.style.top = this.posFija.t + 'px'; }
       this._colocar();
@@ -2796,8 +2796,17 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
       if (!this.compacto) return;
       const m = this.el.modal;
       if (!this.posFija) { // V5_355: sin búsqueda de espacio libre; se ancla bajo Top 5 (#gVeraSlot) o abajo a la derecha
+        m.style.height = ''; // alto natural (la esfera y los botones mandan)
         const w0 = m.offsetWidth, h0 = m.offsetHeight, slot = this._slot();
-        if (slot) { const q = slot.getBoundingClientRect(); m.style.left = Math.max(0, q.left + (q.width - w0) / 2) + 'px'; m.style.top = Math.max(0, q.top + (q.height - h0) / 2) + 'px'; }
+        if (slot) {
+          const q = slot.getBoundingClientRect();
+          const top = Math.max(0, q.top + (q.height - h0) / 2);
+          m.style.left = Math.max(0, q.left + (q.width - w0) / 2) + 'px';
+          m.style.top = top + 'px';
+          // V5_366 · el recuadro de cristal se estira hasta el fondo del hueco;
+          // la esfera y los botones no se mueven porque el lienzo queda arriba del panel
+          if (q.bottom - top > h0) m.style.height = Math.round(q.bottom - top) + 'px';
+        }
         else { m.style.left = Math.max(0, innerWidth - w0 - 14) + 'px'; m.style.top = Math.max(0, innerHeight - h0 - 14) + 'px'; }
         return;
       }
