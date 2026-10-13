@@ -246,7 +246,7 @@
   .vvz.compacto .vvz-caption{display:-webkit-box;position:absolute;left:0;top:calc(100% + 6px);width:224px;margin:0;
     padding:7px 10px;min-height:44px;max-height:64px;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
     box-sizing:border-box;text-align:center;font-size:12px;line-height:1.3;color:#15324a;text-shadow:none;
-    background:rgba(255,255,255,.58);border:1px solid rgba(255,255,255,.65);border-radius:12px;
+    background:rgba(205,213,222,.72);border:1px solid rgba(255,255,255,.5);border-radius:12px;
     backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 2px 10px rgba(20,41,59,.1)}
   .vvz.compacto .vvz-caption.tenue{color:rgba(21,50,74,.62);font-style:italic}
   /* V5_363 · los 5 botones (loop/voz/mic a la izquierda, expandir/cerrar a la derecha) se reparten alrededor de la esfera, ya centrada */
