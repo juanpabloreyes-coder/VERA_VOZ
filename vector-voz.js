@@ -2841,7 +2841,11 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
           const fondo = this._fondoPanel(slot, q);
           if (fondo - top > h0) m.style.height = Math.round(fondo - top) + 'px';
           // V5_369 · el recuadro de texto (vive fuera de h0) se achica si no hay sitio debajo, en vez de empujar el panel
-          if (this.el.caption) this.el.caption.style.maxHeight = Math.max(20, Math.min(64, innerHeight - (top + h0) - 6)) + 'px';
+          if (this.el.caption) {
+            const altoTexto = Math.max(20, Math.min(64, innerHeight - (top + h0) - 6));
+            this.el.caption.style.maxHeight = altoTexto + 'px';
+            this.el.caption.style.minHeight = Math.min(44, altoTexto) + 'px';
+          }
         }
         else { m.style.left = Math.max(0, innerWidth - w0 - 14) + 'px'; m.style.top = Math.max(0, innerHeight - h0 - 14) + 'px'; }
         return;
