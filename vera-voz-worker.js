@@ -472,7 +472,7 @@ async function chat(request, env, cors) {
   }
   // V-USO · registra tokens de entrada/salida de cada solicitud a Claude en los logs del Worker (Observability de Cloudflare),
   // para poder calcular el gasto real por sesión sin necesidad de agregar almacenamiento nuevo.
-  const registrarUso = uso => { try { console.log(JSON.stringify({ evento: 'vera_uso_claude', modelo: uso.modelo || env.CLAUDE_MODEL || MODELO_CLAUDE, entrada: uso.entrada, salida: uso.salida, ts: new Date().toISOString() })); } catch (_) {} };
+  const registrarUso = uso => { try { console.log(JSON.stringify({ evento: 'vera_uso_claude', modelo: uso.modelo || env.CLAUDE_MODEL || MODELO_CLAUDE, entrada: uso.entrada, salida: uso.salida, cacheEscritura: uso.cacheEscritura || 0, cacheLectura: uso.cacheLectura || 0, ts: new Date().toISOString() })); } catch (_) {} };
   return new Response(upstream.body.pipeThrough(new TextDecoderStream()).pipeThrough(sseATexto(registrarUso)).pipeThrough(new TextEncoderStream()), { headers: cabeceras });
 }
 
@@ -574,7 +574,7 @@ function sseATexto(onUso) {
   let buffer = '';
   // V-USO · si se pasa onUso(uso), acumula tokens de entrada/salida de los eventos de Claude (message_start / message_delta)
   // para poder registrar el consumo real por solicitud, sin tocar el texto que recibe el cliente.
-  const uso = { entrada: 0, salida: 0, modelo: '' };
+  const uso = { entrada: 0, salida: 0, modelo: '', cacheEscritura: 0, cacheLectura: 0 };
   const procesar = (bloque, controller) => {
     for (const linea of bloque.split('\n')) {
       if (!linea.startsWith('data:')) continue;
@@ -583,7 +583,9 @@ function sseATexto(onUso) {
       let ev; try { ev = JSON.parse(dato); } catch (_) { continue; }
       if (ev && ev.error) throw new Error('error en stream: ' + String(ev.error.message || ev.error).slice(0, 120));
       try {
-        if (ev.type === 'message_start' && ev.message && ev.message.usage) { uso.entrada = ev.message.usage.input_tokens || 0; uso.modelo = ev.message.model || uso.modelo; }
+        // V-USO · además de entrada/salida, registra cache_creation_input_tokens (tokens que se escribieron al caché)
+        // y cache_read_input_tokens (tokens reutilizados del caché) para poder confirmar si el caché de prompts está pegando.
+        if (ev.type === 'message_start' && ev.message && ev.message.usage) { uso.entrada = ev.message.usage.input_tokens || 0; uso.modelo = ev.message.model || uso.modelo; uso.cacheEscritura = ev.message.usage.cache_creation_input_tokens || 0; uso.cacheLectura = ev.message.usage.cache_read_input_tokens || 0; }
         else if (ev.type === 'message_delta' && ev.usage) uso.salida = ev.usage.output_tokens || uso.salida;
         if (ev.type === 'content_block_delta' && ev.delta && ev.delta.type === 'text_delta') controller.enqueue(ev.delta.text);
         else if (typeof ev.response === 'string' && ev.response) controller.enqueue(ev.response);
@@ -598,7 +600,7 @@ function sseATexto(onUso) {
       let i;
       while ((i = buffer.indexOf('\n\n')) >= 0) { procesar(buffer.slice(0, i), controller); buffer = buffer.slice(i + 2); }
     },
-    flush(controller) { if (buffer.trim()) procesar(buffer, controller); if (onUso && (uso.entrada || uso.salida)) onUso(uso); },
+    flush(controller) { if (buffer.trim()) procesar(buffer, controller); if (onUso && (uso.entrada || uso.salida || uso.cacheEscritura || uso.cacheLectura)) onUso(uso); },
   });
 }
 
