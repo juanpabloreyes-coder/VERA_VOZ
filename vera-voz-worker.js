@@ -431,36 +431,44 @@ async function chat(request, env, cors) {
   const maxTokens = tarea === 'orden' ? 400 : modo === 'voz' ? 350 : 1000;
   const cabeceras = { ...cors, 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' };
 
-  if (!env.ANTHROPIC_API_KEY) {
+  const responderConGratuitas = async (extraHeaders) => {
     // Las respuestas se piden completas (sin streaming): en vivo los streams se cortaban a media frase; así, si un modelo falla, pasa al siguiente.
     // (VERA_STREAM=1 en las variables del Worker reactiva el streaming si se quiere probar.)
     let salida, modelo, intentosPrevios = '';
     try {
       ({ r: salida, modelo, intentos: intentosPrevios } = await correrIA(env, String(body.modelo || ''), [{ role: 'system', content: (tarea === 'orden' ? PERFIL_ORDEN : PERFIL) + '\n\n' + dinamico }, ...(tarea === 'orden' ? compactarHistorial(recortar(mensajes, 8)) : recortar(mensajes, 14))], maxTokens, { temperature: 0.3, stream: !!env.VERA_STREAM }, tarea));
     } catch (err) {
-      return new Response(mensajeErrorIA(err), { headers: { ...cabeceras, 'x-vera-error': String(err && err.message || err).replace(/[^\x20-\x7E]/g, ' ').slice(0, 600) } });
+      return new Response(mensajeErrorIA(err), { headers: { ...cabeceras, ...extraHeaders, 'x-vera-error': String(err && err.message || err).replace(/[^\x20-\x7E]/g, ' ').slice(0, 600) } });
     }
-    const h = { ...cabeceras, 'x-vera-modelo': modelo, 'x-vera-intentos': String(intentosPrevios || '').replace(/[^\x20-\x7E]/g, ' ').slice(0, 600) };
+    const h = { ...cabeceras, ...extraHeaders, 'x-vera-modelo': modelo, 'x-vera-intentos': String(intentosPrevios || '').replace(/[^\x20-\x7E]/g, ' ').slice(0, 600) };
     if (salida instanceof ReadableStream) {
       return new Response(salida.pipeThrough(new TextEncoderStream()), { headers: h });
     }
     return new Response(quitarThinkTexto(textoDe(salida)), { headers: h });
-  }
+  };
 
-  const upstream = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
-    body: JSON.stringify({
-      model: env.CLAUDE_MODEL || MODELO_CLAUDE,
-      max_tokens: maxTokens,
-      system: [{ type: 'text', text: PERFIL, cache_control: { type: 'ephemeral' } }, { type: 'text', text: dinamico }],
-      messages: mensajes,
-      stream: true,
-    }),
-  });
-  if (!upstream.ok || !upstream.body) {
-    const detalle = await upstream.text().catch(() => '');
-    return json({ error: 'El modelo no respondió', estado: upstream.status, detalle: detalle.slice(0, 500) }, 502, cors);
+  if (!env.ANTHROPIC_API_KEY) return responderConGratuitas();
+
+  // V-RESPALDO · con Claude conectado, se intenta primero (rápido y de mejor calidad); si falla por cualquier
+  // razón (sin crédito, límite de uso, error de red, etc.) cae automáticamente a las gratuitas (Groq/Mistral/
+  // Gemini/Workers AI) en vez de dejar a Vera sin responder. Útil mientras se decide si se contrata Claude.
+  let upstream;
+  try {
+    upstream = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: env.CLAUDE_MODEL || MODELO_CLAUDE,
+        max_tokens: maxTokens,
+        system: [{ type: 'text', text: PERFIL, cache_control: { type: 'ephemeral' } }, { type: 'text', text: dinamico }],
+        messages: mensajes,
+        stream: true,
+      }),
+    });
+  } catch (_) { upstream = null; }
+  if (!upstream || !upstream.ok || !upstream.body) {
+    const estado = upstream ? upstream.status : 0;
+    return responderConGratuitas({ 'x-vera-respaldo': 'claude-fallo-' + estado });
   }
   // V-USO · registra tokens de entrada/salida de cada solicitud a Claude en los logs del Worker (Observability de Cloudflare),
   // para poder calcular el gasto real por sesión sin necesidad de agregar almacenamiento nuevo.
