@@ -3121,6 +3121,7 @@ Ejemplo: "activa la pintura vinílica de la nave" (CONCEPTOS: 131808 Pintura Vin
         if (Memoria.pendientes(this.historial).filter(m => m.role === 'user').length >= 4) Memoria.consolidar(this.historial);
       } catch (e) {
         if (ctrl.signal.aborted) return;
+        console.error('[Vera] Error en _turno:', e);
         this.controlador = null;
         burbuja.classList.remove('vivo'); burbuja.classList.add('error');
         cuerpo.innerHTML = markdown(visibleTxt ? visibleTxt + '\n\n_(La respuesta se interrumpió.)_' : /chat 5\d\d/.test(String(e && e.message)) ? 'El servicio de Vera tuvo un problema momentáneo. Inténtalo de nuevo en unos segundos.' : 'No pude conectarme con el asistente en este momento. Revisa tu conexión e inténtalo de nuevo.');
