@@ -425,7 +425,7 @@ async function chat(request, env, cors) {
   if (typeof c.detalle === 'string' && c.detalle.trim()) partes.push(`# DETALLE DE PANTALLA\n${c.detalle.slice(0, 5000)}`);
   const dinamico = partes.join('\n\n');
 
-  const maxTokens = tarea === 'orden' ? 400 : modo === 'voz' ? 350 : 1000;
+  const maxTokens = tarea === 'orden' ? 1200 : modo === 'voz' ? 700 : 1500;
   const cabeceras = { ...cors, 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' };
 
   if (!env.ANTHROPIC_API_KEY) {
